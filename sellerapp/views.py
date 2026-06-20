@@ -439,7 +439,7 @@ def checkout(request):
 
      Cartitem.objects.filter(cart=cart).delete()
 
-     return redirect('userpanel')
+     return redirect('cart')
      
 
 
