@@ -1,4 +1,4 @@
-        * {
+* {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -759,6 +759,11 @@
 
         .status-pending {
             background: #f56565;
+            color: white;
+        }
+
+        .status-rejected {
+            background: #c53030;
             color: white;
         }
 
@@ -2452,5 +2457,359 @@
             .order-detail-meta-grid,
             .order-detail-customer-grid {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===================================================
+           ORDER DETAIL VIEW (QuickBasket) — "qod-" namespace
+           Added to extend the existing Orders section with a
+           detailed single-order view. Does not alter any
+           existing rules above.
+        =================================================== */
+
+        .qod-page {
+            padding: 10px;
+        }
+
+        .qod-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .qod-topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .qod-topbar h2 {
+            color: #333;
+            font-size: 1.6rem;
+            margin: 0;
+        }
+
+        .qod-topbar h2 span {
+            color: #667eea;
+        }
+
+        /* Two column grid: main content + sidebar */
+        .qod-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .qod-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 24px 26px;
+            margin-bottom: 22px;
+        }
+
+        .qod-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .qod-card-title {
+            font-size: 1.05rem;
+            color: #2d3748;
+            font-weight: 700;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qod-card-title i {
+            color: #667eea;
+        }
+
+        /* Order meta row: ID / date / customer name / email / phone */
+        .qod-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            padding-bottom: 22px;
+            margin-bottom: 22px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .qod-meta-item label {
+            display: block;
+            font-size: 0.72rem;
+            color: #a0aec0;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .qod-meta-item span {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #2d3748;
+            word-break: break-word;
+        }
+
+        /* Items table */
+        .qod-items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .qod-items-table th {
+            text-align: left;
+            padding: 10px 12px;
+            color: #718096;
+            font-weight: 600;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .qod-items-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #edf2f7;
+            color: #4a5568;
+            vertical-align: middle;
+        }
+
+        .qod-items-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .qod-product-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .qod-product-cell img {
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: #f0f2f5;
+            flex-shrink: 0;
+        }
+
+        .qod-product-cell span {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.92rem;
+        }
+
+        .qod-text-right {
+            text-align: right;
+        }
+
+        .qod-subtotal-cell {
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        /* Totals block under items table */
+        .qod-totals {
+            margin-top: 18px;
+            padding-top: 6px;
+            max-width: 340px;
+            margin-left: auto;
+        }
+
+        .qod-totals-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.92rem;
+            color: #4a5568;
+        }
+
+        .qod-totals-row.qod-discount span:last-child {
+            color: #48bb78;
+            font-weight: 600;
+        }
+
+        .qod-totals-row.qod-grand-total {
+            margin-top: 6px;
+            padding-top: 14px;
+            border-top: 2px dashed #e2e8f0;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        .qod-totals-row.qod-grand-total span:last-child {
+            color: #667eea;
+        }
+
+        /* Sidebar: customer card */
+        .qod-customer-card {
+            text-align: center;
+        }
+
+        .qod-customer-card .qod-card-title {
+            justify-content: center;
+        }
+
+        .qod-avatar {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ebf4ff;
+            margin: 0 auto 14px;
+            display: block;
+        }
+
+        .qod-customer-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 4px;
+        }
+
+        .qod-customer-card .qod-contact-row {
+            justify-content: center;
+        }
+
+        .qod-contact-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: #4a5568;
+            margin-top: 10px;
+        }
+
+        .qod-contact-row i {
+            color: #667eea;
+            width: 16px;
+            text-align: center;
+        }
+
+        /* Shipping address */
+        .qod-address-text {
+            font-size: 0.9rem;
+            color: #4a5568;
+            line-height: 1.7;
+        }
+
+        .qod-address-text strong {
+            display: block;
+            color: #1a202c;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        /* Order summary card */
+        .qod-summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 0;
+            font-size: 0.9rem;
+            color: #4a5568;
+            border-bottom: 1px dashed #edf2f7;
+        }
+
+        .qod-summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .qod-summary-row span:first-child {
+            color: #718096;
+        }
+
+        .qod-summary-row span:last-child {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .qod-summary-row.qod-summary-total span:last-child {
+            color: #667eea;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        /* Action buttons */
+        .qod-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .qod-btn {
+            border: none;
+            padding: 13px 20px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .qod-btn-accept {
+            background: #48bb78;
+            color: white;
+        }
+
+        .qod-btn-accept:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+
+        .qod-btn-reject {
+            background: #fff5f5;
+            color: #e53e3e;
+            border: 2px solid #fc8181;
+        }
+
+        .qod-btn-reject:hover {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .qod-btn-deliver {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .qod-btn-deliver:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .qod-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        @media (max-width: 992px) {
+            .qod-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .qod-meta-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .qod-totals {
+                max-width: 100%;
             }
         }

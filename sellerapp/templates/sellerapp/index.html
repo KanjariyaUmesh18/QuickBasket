@@ -1,1003 +1,1285 @@
-    {% load static %}
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin Panel · QuickBasket</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="{% static  'sellerapp/css/index.css' %}">
-    </head>
-    <body>
-        <div class="container">
-            <!-- SIDEBAR -->
-            <div class="sidebar">
-                <div class="sidebar-header">
-                    <i class="fas fa-store"></i>
-                    <h2>QuickBasket</h2>
-                    <p>Admin Panel</p>
-                </div>
-
-                <ul class="nav-menu">   
-                    <li class="nav-item">
-                        <div class="nav-link active" onclick="showSection('dashboard')">
-                            <i class="fas fa-home"></i> Dashboard
-                        </div>
-                    </li>
-                    
-                    <!-- PRODUCTS with Submenu -->
-                    <li class="nav-item">
-                        <div class="nav-link" onclick="toggleSubmenu('productsSubmenu', this)">
-                            <i class="fas fa-box"></i> Products
-                            <i class="fas fa-chevron-down" style="margin-left: auto; font-size: 0.8rem;"></i>
-                        </div>
-                        <ul class="submenu" id="productsSubmenu">
-                            <li class="submenu-item">
-                                <a href="#" onclick="showSection('addProduct')" class="submenu-link">
-                                    <i class="fas fa-plus-circle"></i> Add Product
-                                </a>
-                            </li>
-                            <li class="submenu-item">
-                                <a href="{% url 'view_products' %}" class="submenu-link">
-                                    <i class="fas fa-eye"></i> View Products
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <!-- CATEGORIES with Submenu (Updated) -->
-                    <li class="nav-item">
-                        <div class="nav-link" onclick="toggleSubmenu('categoriesSubmenu', this)">
-                            <i class="fas fa-tags"></i> Categories
-                            <i class="fas fa-chevron-down" style="margin-left: auto; font-size: 0.8rem;"></i>
-                        </div>
-                        <ul class="submenu" id="categoriesSubmenu">
-                            <li class="submenu-item">
-                                <div class="submenu-link">
-                                    <i class="fas fa-plus-circle"></i>
-                                    <a href="{% url 'add_category'%}">Add Category</a> 
-                                </div>
-                            </li>
-                            <li class="submenu-item">
-                                <div class="submenu-link">
-                                    <i class="fas fa-eye"></i>
-                                    <a href="{% url 'view_categories' %}">View Categories</a>
-                                </div>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item">
-                        <div class="nav-link" onclick="showSection('orders')">
-                            <i class="fas fa-shopping-cart"></i> Orders
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <div class="nav-link" onclick="showSection('users')">
-                            <i class="fas fa-users"></i> Users
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <div class="nav-link" onclick="showSection('payments')">
-                            <i class="fas fa-credit-card"></i> Payments
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <div class="nav-link" onclick="showSection('settings')">
-                            <i class="fas fa-cog"></i> Settings
-                        </div>
-                    </li>
-                </ul>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel · QuickBasket</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static  'sellerapp/css/index.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-store"></i>
+                <h2>QuickBasket</h2>
+                <p>Admin Panel</p>
             </div>
 
-            <!-- MAIN CONTENT -->
-            <div class="main-content">
-                <!-- Top Bar -->
-                <div class="top-bar">
-                    <div class="search-bar">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search...">
+            <ul class="nav-menu">   
+                <li class="nav-item">
+                    <div class="nav-link active" onclick="showSection('dashboard')">
+                        <i class="fas fa-home"></i> Dashboard
                     </div>
-                    <div class="admin-info">    
-                        <div class="notification">
-                            <i class="fas fa-bell"></i>
-                            <span>3</span>
+                </li>
+                
+                <!-- PRODUCTS with Submenu -->
+                <li class="nav-item">
+                    <div class="nav-link" onclick="toggleSubmenu('productsSubmenu', this)">
+                        <i class="fas fa-box"></i> Products
+                        <i class="fas fa-chevron-down" style="margin-left: auto; font-size: 0.8rem;"></i>
+                    </div>
+                    <ul class="submenu" id="productsSubmenu">
+                        <li class="submenu-item">
+                            <a href="#" onclick="showSection('addProduct')" class="submenu-link">
+                                <i class="fas fa-plus-circle"></i> Add Product
+                            </a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="{% url 'view_products' %}" class="submenu-link">
+                                <i class="fas fa-eye"></i> View Products
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- CATEGORIES with Submenu (Updated) -->
+                <li class="nav-item">
+                    <div class="nav-link" onclick="toggleSubmenu('categoriesSubmenu', this)">
+                        <i class="fas fa-tags"></i> Categories
+                        <i class="fas fa-chevron-down" style="margin-left: auto; font-size: 0.8rem;"></i>
+                    </div>
+                    <ul class="submenu" id="categoriesSubmenu">
+                        <li class="submenu-item">
+                            <div class="submenu-link">
+                                <i class="fas fa-plus-circle"></i>
+                                <a href="{% url 'add_category'%}">Add Category</a> 
+                            </div>
+                        </li>
+                        <li class="submenu-item">
+                            <div class="submenu-link">
+                                <i class="fas fa-eye"></i>
+                                <a href="{% url 'view_categories' %}">View Categories</a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <div class="nav-link" onclick="showSection('orders')">
+                        <i class="fas fa-shopping-cart"></i> Orders
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" onclick="showSection('users')">
+                        <i class="fas fa-users"></i> Users
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" onclick="showSection('payments')">
+                        <i class="fas fa-credit-card"></i> Payments
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" onclick="showSection('settings')">
+                        <i class="fas fa-cog"></i> Settings
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="admin-info">    
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span>3</span>
+                    </div>
+                    <button class="logout-btn">
+                        <a class="logout-btn-raj" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </button>
+                    <div class="admin-profile" onclick="showSection('adminProfile')">
+                        <div class="admin-avatar">
+                            <img src="{{sid.picture.url}}" class="top-profile-img">
                         </div>
-                        <button class="logout-btn">
-                            <a class="logout-btn-raj" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        <div>
+                            <p style="font-weight: 600;">{{sid.role}}</p>
+                            <p style="font-size: 0.8rem;">{{sid.firstname}} {{sid.lastname}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD SECTION -->
+            <div id="dashboard-section" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-box"></i></div>
+                        <div class="stat-info">
+                            <h3>{{ totalproducts }}</h3>
+                            <p>Total Products</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-tags"></i></div>
+                        <div class="stat-info">
+                            <h3>{{ totalcategories }}</h3>
+                            <p>Categories</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                        <div class="stat-info">
+                            <h3>1,234</h3>
+                            <p>Total Orders</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-info">
+                            <h3>892</h3>
+                            <p>Total Users</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="form-container" style="margin-bottom: 30px;">
+                    <div class="form-title"><h3>Recent Orders</h3></div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>#ORD001</td><td>John Doe</td><td>2024-01-15</td><td>₹1,234</td><td><span class="status-badge status-delivered">Delivered</span></td></tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Users -->
+                <div class="form-container">
+                    <div class="form-title"><h3>Recent Users</h3></div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1</td><td>John Doe</td><td>john@email.com</td><td><span class="user-role">User</span></td><td><span class="status-badge status-active">Active</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADD PRODUCT SECTION -->
+            <div id="addProduct-section" class="content-section">
+                <div class="form-container">
+                    <div class="form-title">
+                        <h2><i class="fas fa-plus-circle" style="color: #667eea;"></i> Add New Product</h2>
+                    </div>
+                    <form method="POST" action="{% url 'add_product' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label><i class="fas fa-tag"></i> Product Name *</label>
+                                <input type="text" placeholder="e.g. Fresh Cow Milk" name="product_name">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-layer-group"></i> Category *</label>
+                                <select name="product_category">
+                                    <option value="">Select Category</option>
+                                    <option value="Dairy">🥛 Dairy</option>
+                                    <option value="Vegetables">🥬 Vegetables</option>
+                                    <option value="Fruits">🍎 Fruits</option>
+                                    <option value="Grocery">🛒 Grocery</option>
+                                    <option value="Bakery">🥖 Bakery</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-rupee-sign"></i> Price (₹) *</label>
+                                <input type="number" placeholder="e.g. 58" name="product_price">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-boxes"></i> Stock Quantity *</label>
+                                <input type="number" placeholder="e.g. 150" name="stock_qty">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Picture</label>
+                                <input type="file" name="picture">
+                            </div>
+                            <div class="form-group full-width">
+                                <label><i class="fas fa-file-alt"></i> Description</label>
+                                <textarea rows="4" placeholder="Detailed product description..." name="description"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-percent"></i> Discount (%)</label>
+                                <input type="number" placeholder="e.g. 15" value="0" name="discount">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-star"></i> Badge Text</label>
+                                <input type="text" placeholder="e.g. Bestseller, New" name="badge_text">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-weight"></i> Weight/Unit</label>
+                                <input type="text" placeholder="e.g. 1L, 500g" name="weight_unit">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-tag"></i> Brand</label>
+                                <input type="text" placeholder="e.g. Amul, Nestle" name="brand">
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Save Product
                         </button>
-                        <div class="admin-profile" onclick="showSection('adminProfile')">
-                            <div class="admin-avatar">
-                                <img src="{{sid.picture.url}}" class="top-profile-img">
-                            </div>
-                            <div>
-                                <p style="font-weight: 600;">{{sid.role}}</p>
-                                <p style="font-size: 0.8rem;">{{sid.firstname}} {{sid.lastname}}</p>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
+            </div>
 
-                <!-- DASHBOARD SECTION -->
-                <div id="dashboard-section" class="content-section active">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon"><i class="fas fa-box"></i></div>
-                            <div class="stat-info">
-                                <h3>{{ totalproducts }}</h3>
-                                <p>Total Products</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon"><i class="fas fa-tags"></i></div>
-                            <div class="stat-info">
-                                <h3>{{ totalcategories }}</h3>
-                                <p>Categories</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
-                            <div class="stat-info">
-                                <h3>1,234</h3>
-                                <p>Total Orders</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon"><i class="fas fa-users"></i></div>
-                            <div class="stat-info">
-                                <h3>892</h3>
-                                <p>Total Users</p>
-                            </div>
-                        </div>
+            <!-- ===== VIEW PRODUCTS SECTION ===== -->
+            <div id="viewProducts-section" class="content-section">
+                <div class="form-container">
+                    <div class="form-title">
+                        <h2><i class="fas fa-eye" style="color: #667eea;"></i> View Products</h2>
+                        <p>Kisi bhi product par click karo details dekhne ke liye</p>
                     </div>
-
-                    <!-- Recent Orders -->
-                    <div class="form-container" style="margin-bottom: 30px;">
-                        <div class="form-title"><h3>Recent Orders</h3></div>
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Order ID</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>#ORD001</td><td>John Doe</td><td>2024-01-15</td><td>₹1,234</td><td><span class="status-badge status-delivered">Delivered</span></td></tr>
-
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="search-products">
+                        <input type="text" id="viewSearchInput" placeholder="Products search karo..." onkeyup="filterViewProducts()">
+                        <select id="viewCategoryFilter" onchange="filterViewProducts()">
+                            <option value="all">All Categories</option>
+                            <option value="Dairy">🥛 Dairy</option>
+                            <option value="Vegetables">🥬 Vegetables</option>
+                            <option value="Fruits">🍎 Fruits</option>
+                            <option value="Grocery">🛒 Grocery</option>
+                            <option value="Bakery">🥖 Bakery</option>
+                        </select>
                     </div>
-
-                    <!-- Recent Users -->
-                    <div class="form-container">
-                        <div class="form-title"><h3>Recent Users</h3></div>
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>User ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>1</td><td>John Doe</td><td>john@email.com</td><td><span class="user-role">User</span></td><td><span class="status-badge status-active">Active</span></td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <div id="viewProductsGrid" class="view-products-grid"></div>
                 </div>
+            </div>
 
-                <!-- ADD PRODUCT SECTION -->
-                <div id="addProduct-section" class="content-section">
-                    <div class="form-container">
-                        <div class="form-title">
-                            <h2><i class="fas fa-plus-circle" style="color: #667eea;"></i> Add New Product</h2>
-                        </div>
-                        <form method="POST" action="{% url 'add_product' %}" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label><i class="fas fa-tag"></i> Product Name *</label>
-                                    <input type="text" placeholder="e.g. Fresh Cow Milk" name="product_name">
-                                </div>
-                                <div class="form-group">
-                                    <label><i class="fas fa-layer-group"></i> Category *</label>
-                                    <select name="product_category">
-                                        <option value="">Select Category</option>
-                                        <option value="Dairy">🥛 Dairy</option>
-                                        <option value="Vegetables">🥬 Vegetables</option>
-                                        <option value="Fruits">🍎 Fruits</option>
-                                        <option value="Grocery">🛒 Grocery</option>
-                                        <option value="Bakery">🥖 Bakery</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label><i class="fas fa-rupee-sign"></i> Price (₹) *</label>
-                                    <input type="number" placeholder="e.g. 58" name="product_price">
-                                </div>
-                                <div class="form-group">
-                                    <label><i class="fas fa-boxes"></i> Stock Quantity *</label>
-                                    <input type="number" placeholder="e.g. 150" name="stock_qty">
-                                </div>
-                                <div class="form-group full-width">
-                                    <label>Picture</label>
-                                    <input type="file" name="picture">
-                                </div>
-                                <div class="form-group full-width">
-                                    <label><i class="fas fa-file-alt"></i> Description</label>
-                                    <textarea rows="4" placeholder="Detailed product description..." name="description"></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label><i class="fas fa-percent"></i> Discount (%)</label>
-                                    <input type="number" placeholder="e.g. 15" value="0" name="discount">
-                                </div>
-                                <div class="form-group">
-                                    <label><i class="fas fa-star"></i> Badge Text</label>
-                                    <input type="text" placeholder="e.g. Bestseller, New" name="badge_text">
-                                </div>
-                                <div class="form-group">
-                                    <label><i class="fas fa-weight"></i> Weight/Unit</label>
-                                    <input type="text" placeholder="e.g. 1L, 500g" name="weight_unit">
-                                </div>
-                                <div class="form-group">
-                                    <label><i class="fas fa-tag"></i> Brand</label>
-                                    <input type="text" placeholder="e.g. Amul, Nestle" name="brand">
-                                </div>
-                            </div>
-                            <button type="submit" class="submit-btn">
-                                <i class="fas fa-save"></i> Save Product
-                            </button>
-                        </form>
-                    </div>
-                </div>
+            <!-- ===== PRODUCT DETAIL SECTION ===== -->
+            <div id="productDetail-section" class="content-section">
+                <div class="product-detail-page">
+                    <div class="product-detail-card">
 
-                <!-- ===== VIEW PRODUCTS SECTION ===== -->
-                <div id="viewProducts-section" class="content-section">
-                    <div class="form-container">
-                        <div class="form-title">
-                            <h2><i class="fas fa-eye" style="color: #667eea;"></i> View Products</h2>
-                            <p>Kisi bhi product par click karo details dekhne ke liye</p>
-                        </div>
-                        <div class="search-products">
-                            <input type="text" id="viewSearchInput" placeholder="Products search karo..." onkeyup="filterViewProducts()">
-                            <select id="viewCategoryFilter" onchange="filterViewProducts()">
-                                <option value="all">All Categories</option>
-                                <option value="Dairy">🥛 Dairy</option>
-                                <option value="Vegetables">🥬 Vegetables</option>
-                                <option value="Fruits">🍎 Fruits</option>
-                                <option value="Grocery">🛒 Grocery</option>
-                                <option value="Bakery">🥖 Bakery</option>
-                            </select>
-                        </div>
-                        <div id="viewProductsGrid" class="view-products-grid"></div>
-                    </div>
-                </div>
-
-                <!-- ===== PRODUCT DETAIL SECTION ===== -->
-                <div id="productDetail-section" class="content-section">
-                    <div class="product-detail-page">
-                        <div class="product-detail-card">
-
-                            <!-- ✅ HEADING + BACK BTN — CARD KE ANDAR -->
-                            <div class="product-detail-header">
-                                <h2><i class="fas fa-box" style="color: #667eea;"></i> Product Details</h2>
-                                <button class="back-btn" onclick="showSection('viewProducts')">
-                                    <i class="fas fa-arrow-left"></i> Back to Products
-                                </button>
-                            </div>
-
-                            <div class="product-detail-top">
-                                <div class="product-detail-img-wrap">
-                                    <img id="detailProductImg" src="" alt="Product Image">
-                                    <span class="product-detail-badge" id="detailProductBadge"></span>
-                                </div>
-                                <div class="product-detail-info">
-                                    <h2 class="product-detail-name" id="detailProductName"></h2>
-                                    <span class="product-detail-category" id="detailProductCategory"></span>
-
-                                    <div class="product-detail-meta">
-                                        <div class="detail-meta-item">
-                                            <label>💰 Price</label>
-                                            <span class="detail-price-big" id="detailProductPrice"></span>
-                                        </div>
-                                        <div class="detail-meta-item">
-                                            <label>📦 Stock</label>
-                                            <span id="detailProductStock"></span>
-                                        </div>
-                                        <div class="detail-meta-item">
-                                            <label>🏷️ Brand</label>
-                                            <span id="detailProductBrand"></span>
-                                        </div>
-                                        <div class="detail-meta-item">
-                                            <label>⚖️ Weight/Unit</label>
-                                            <span id="detailProductWeight"></span>
-                                        </div>
-                                        <div class="detail-meta-item">
-                                            <label>🔖 Discount</label>
-                                            <span id="detailProductDiscount"></span>
-                                        </div>
-                                        <div class="detail-meta-item">
-                                            <label>📝 Short Desc</label>
-                                            <span id="detailProductShortDesc" style="font-size:0.9rem; font-weight:500;"></span>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label style="font-size:0.75rem; color:#718096; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">📄 Description</label>
-                                        <p class="product-detail-desc" id="detailProductDesc"></p>
-                                    </div>
-
-                                    <div>
-                                        <label style="font-size:0.75rem; color:#718096; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:8px;">✨ Features / Specs</label>
-                                        <div class="product-detail-specs" id="detailProductSpecs"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Action Buttons -->
-                            <div class="product-detail-actions">
-                                <button class="btn-edit-product" onclick="openEditFromDetail()">
-                                    <i class="fas fa-edit"></i> Edit Product
-                                </button>
-                                <button class="btn-delete-product" onclick="deleteProductFromDetail()">
-                                    <i class="fas fa-trash-alt"></i> Delete Product
-                                </button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ===== EDIT PRODUCT FORM SECTION ===== -->
-                <div id="editProductForm-section" class="content-section">
-                    <div class="form-container">
-                        <div class="form-title">
-                            <h2><i class="fas fa-edit" style="color: #667eea;"></i> Edit Product</h2>
-                            <button class="back-btn" onclick="goBackToDetail()">
-                                <i class="fas fa-arrow-left"></i> Back to Details
+                        <!-- ✅ HEADING + BACK BTN — CARD KE ANDAR -->
+                        <div class="product-detail-header">
+                            <h2><i class="fas fa-box" style="color: #667eea;"></i> Product Details</h2>
+                            <button class="back-btn" onclick="showSection('viewProducts')">
+                                <i class="fas fa-arrow-left"></i> Back to Products
                             </button>
                         </div>
-                        <form onsubmit="updateProduct(event)">
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label><i class="fas fa-tag"></i> Product Name *</label>
-                                    <input type="text" id="editProductName" placeholder="e.g. Fresh Cow Milk" required>
-                                </div>
-                                <div class="form-group">
-                                    <label><i class="fas fa-layer-group"></i> Category *</label>
-                                    <select id="editProductCategory" required>
-                                        <option value="">Select Category</option>
-                                        <option value="Dairy">🥛 Dairy</option>
-                                        <option value="Vegetables">🥬 Vegetables</option>
-                                        <option value="Fruits">🍎 Fruits</option>
-                                        <option value="Grocery">🛒 Grocery</option>
-                                        <option value="Bakery">🥖 Bakery</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label><i class="fas fa-rupee-sign"></i> Price (₹) *</label>
-                                    <input type="number" id="editProductPrice" placeholder="e.g. 58" required>
-                                </div>
-                                <div class="form-group">
-                                    <label><i class="fas fa-boxes"></i> Stock Quantity *</label>
-                                    <input type="number" id="editProductStock" placeholder="e.g. 150" required>
-                                </div>
-                                <div class="form-group full-width">
-                                    <label><i class="fas fa-image"></i> Image URL *</label>
-                                    <input type="url" id="editProductImage" placeholder="https://example.com/image.jpg" onchange="updateEditImagePreview(this.value)">
-                                    <div class="image-preview" id="editImagePreview">
-                                        <i class="fas fa-cloud-upload-alt" style="font-size: 2rem;"></i>
-                                        <p>Image preview will appear here</p>
+
+                        <div class="product-detail-top">
+                            <div class="product-detail-img-wrap">
+                                <img id="detailProductImg" src="" alt="Product Image">
+                                <span class="product-detail-badge" id="detailProductBadge"></span>
+                            </div>
+                            <div class="product-detail-info">
+                                <h2 class="product-detail-name" id="detailProductName"></h2>
+                                <span class="product-detail-category" id="detailProductCategory"></span>
+
+                                <div class="product-detail-meta">
+                                    <div class="detail-meta-item">
+                                        <label>💰 Price</label>
+                                        <span class="detail-price-big" id="detailProductPrice"></span>
+                                    </div>
+                                    <div class="detail-meta-item">
+                                        <label>📦 Stock</label>
+                                        <span id="detailProductStock"></span>
+                                    </div>
+                                    <div class="detail-meta-item">
+                                        <label>🏷️ Brand</label>
+                                        <span id="detailProductBrand"></span>
+                                    </div>
+                                    <div class="detail-meta-item">
+                                        <label>⚖️ Weight/Unit</label>
+                                        <span id="detailProductWeight"></span>
+                                    </div>
+                                    <div class="detail-meta-item">
+                                        <label>🔖 Discount</label>
+                                        <span id="detailProductDiscount"></span>
+                                    </div>
+                                    <div class="detail-meta-item">
+                                        <label>📝 Short Desc</label>
+                                        <span id="detailProductShortDesc" style="font-size:0.9rem; font-weight:500;"></span>
                                     </div>
                                 </div>
-                                <div class="form-group full-width">
-                                    <label><i class="fas fa-align-left"></i> Short Description</label>
-                                    <textarea id="editProductShortDesc" rows="2" placeholder="e.g. 1L • Toned • Protein"></textarea>
+
+                                <div>
+                                    <label style="font-size:0.75rem; color:#718096; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">📄 Description</label>
+                                    <p class="product-detail-desc" id="detailProductDesc"></p>
                                 </div>
-                                <div class="form-group full-width">
-                                    <label><i class="fas fa-file-alt"></i> Full Description</label>
-                                    <textarea id="editProductDescription" rows="4" placeholder="Detailed product description..."></textarea>
+
+                                <div>
+                                    <label style="font-size:0.75rem; color:#718096; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:8px;">✨ Features / Specs</label>
+                                    <div class="product-detail-specs" id="detailProductSpecs"></div>
                                 </div>
-                                <div class="form-group full-width">
-                                    <label><i class="fas fa-clipboard-list"></i> Key Features / Specifications</label>
-                                    <div class="specs-grid" id="editSpecsContainer"></div>
-                                    <button type="button" onclick="addEditSpecField()" style="margin-top:10px; background:#48bb78; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">
-                                        <i class="fas fa-plus"></i> Add More Feature
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="product-detail-actions">
+                            <button class="btn-edit-product" onclick="openEditFromDetail()">
+                                <i class="fas fa-edit"></i> Edit Product
+                            </button>
+                            <button class="btn-delete-product" onclick="deleteProductFromDetail()">
+                                <i class="fas fa-trash-alt"></i> Delete Product
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== EDIT PRODUCT FORM SECTION ===== -->
+            <div id="editProductForm-section" class="content-section">
+                <div class="form-container">
+                    <div class="form-title">
+                        <h2><i class="fas fa-edit" style="color: #667eea;"></i> Edit Product</h2>
+                        <button class="back-btn" onclick="goBackToDetail()">
+                            <i class="fas fa-arrow-left"></i> Back to Details
+                        </button>
+                    </div>
+                    <form onsubmit="updateProduct(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label><i class="fas fa-tag"></i> Product Name *</label>
+                                <input type="text" id="editProductName" placeholder="e.g. Fresh Cow Milk" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-layer-group"></i> Category *</label>
+                                <select id="editProductCategory" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Dairy">🥛 Dairy</option>
+                                    <option value="Vegetables">🥬 Vegetables</option>
+                                    <option value="Fruits">🍎 Fruits</option>
+                                    <option value="Grocery">🛒 Grocery</option>
+                                    <option value="Bakery">🥖 Bakery</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-rupee-sign"></i> Price (₹) *</label>
+                                <input type="number" id="editProductPrice" placeholder="e.g. 58" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-boxes"></i> Stock Quantity *</label>
+                                <input type="number" id="editProductStock" placeholder="e.g. 150" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label><i class="fas fa-image"></i> Image URL *</label>
+                                <input type="url" id="editProductImage" placeholder="https://example.com/image.jpg" onchange="updateEditImagePreview(this.value)">
+                                <div class="image-preview" id="editImagePreview">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem;"></i>
+                                    <p>Image preview will appear here</p>
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label><i class="fas fa-align-left"></i> Short Description</label>
+                                <textarea id="editProductShortDesc" rows="2" placeholder="e.g. 1L • Toned • Protein"></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label><i class="fas fa-file-alt"></i> Full Description</label>
+                                <textarea id="editProductDescription" rows="4" placeholder="Detailed product description..."></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label><i class="fas fa-clipboard-list"></i> Key Features / Specifications</label>
+                                <div class="specs-grid" id="editSpecsContainer"></div>
+                                <button type="button" onclick="addEditSpecField()" style="margin-top:10px; background:#48bb78; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">
+                                    <i class="fas fa-plus"></i> Add More Feature
+                                </button>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-percent"></i> Discount (%)</label>
+                                <input type="number" id="editProductDiscount" placeholder="e.g. 15" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-star"></i> Badge Text</label>
+                                <input type="text" id="editProductBadge" placeholder="e.g. Bestseller, New">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-weight"></i> Weight/Unit</label>
+                                <input type="text" id="editProductWeight" placeholder="e.g. 1L, 500g">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-tag"></i> Brand</label>
+                                <input type="text" id="editProductBrand" placeholder="e.g. Amul, Nestle">
+                            </div>
+                        </div>
+                        <input type="hidden" id="editProductId">
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Update Product
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ADMIN PROFILE SECTION -->
+            <div id="adminProfile-section" class="content-section">
+                <div class="profile-page">
+                    <div class="profile-header">
+                        <h2><i class="fas fa-user-circle" style="color: #667eea;"></i> Admin Profile</h2>
+                        <button class="back-btn" onclick="showSection('dashboard')">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </button>
+                    </div>
+                    <div class="profile-content">
+                        <div class="profile-avatar-large">
+                            <img src="{{sid.picture.url}}" height="100px" width="90px">
+                        </div>
+                        <h2 style="margin-bottom: 5px;">{{sid.firstname}} {{sid.lastname}}</h2>
+                        <p style="color: #667eea; margin-bottom: 20px;">Seller</p>
+                        <div class="profile-details-grid">
+                            <p><strong>Full Name:</strong>{{sid.firstname}} {{sid.lastname}}</p>
+                            <p><strong>Email:</strong>{{uid.email}}</p>
+                            <p><strong>Phone:</strong>{{sid.contactno}}</p>
+                            <p><strong>Status:</strong> <span class="status-badge status-active">Active</span></p>
+                            <p><strong>Joined:</strong> {{uid.created_at}}</p>
+                            <p><strong>Last Login:</strong> Today 10:30 AM</p>
+                        </div>
+                        <button class="submit-btn" style="margin-top: 30px; max-width: 300px;" onclick="showSection('editProfile')">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EDIT PROFILE SECTION -->
+            <div id="editProfile-section" class="content-section">
+                <div class="edit-profile-page">
+                    <div class="edit-profile-header">
+                        <h2><i class="fas fa-user-edit" style="color: #667eea;"></i> Edit Profile</h2>
+                        <button class="back-btn" onclick="showSection('adminProfile')">
+                            <i class="fas fa-arrow-left"></i> Back to Profile
+                        </button>
+                    </div>
+                    <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" value="{{sid.firstname}}" placeholder="Enter First name" name="firstname">
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" value="{{sid.lastname}}" placeholder="Enter Last name" name="lastname">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" value="{{uid.email}}" placeholder="Enter email" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="tel" value="{{sid.contactno}}" placeholder="Enter phone" name="contactno">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Seller Store Name</label>
+                                <input type="text" value="{{sid.seller_stock_name}}" placeholder="Enter Store Name" name="seller_stock_name">
+                            </div>
+                            <div class="form-group">
+                                <label>Picture</label>
+                                <input type="file" name="picture">
+                            </div>
+                        </div>
+                        <input type="submit" class="submit-btn" value="Update Profile">
+                    </form>
+                </div>
+            </div>
+
+            <!-- CATEGORIES SECTION -->
+            <div id="categories-section" class="content-section">
+                <div class="form-container">
+                    <div class="form-title">
+                        <h2><i class="fas fa-tags" style="color: #667eea;"></i> Categories Management</h2>
+                        <button class="submit-btn" style="width: auto; padding: 10px 20px;" onclick="showSection('addCategory')">Add Category</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th><th>Category Name</th><th>Products Count</th><th>Status</th><th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoriesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADD CATEGORY SECTION -->
+            <div id="addCategory-section" class="content-section">
+                <div class="form-container">
+                    <div class="form-title">
+                        <h2><i class="fas fa-plus-circle" style="color: #667eea;"></i> Add New Category</h2>
+                        <button class="back-btn" onclick="showSection('categories')">
+                            <i class="fas fa-arrow-left"></i> Back to Categories
+                        </button>
+                    </div>
+                    <form onsubmit="saveCategory(event)">
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label>Category Name *</label>
+                                <input type="text" id="categoryName" placeholder="e.g. Dairy, Vegetables" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Icon</label>
+                                <input type="text" id="categoryIcon" placeholder="e.g. 🥛, 🥬" value="📦">
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="categoryStatus">
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Description</label>
+                                <textarea id="categoryDesc" rows="3" placeholder="Category description..."></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Save Category
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ORDERS SECTION -->
+            <div id="orders-section" class="content-section">
+                <div class="form-container">
+                    <div class="form-title">
+                        <h2><i class="fas fa-shopping-cart" style="color: #667eea;"></i> Orders Management</h2>
+                        <select onchange="filterOrders()" style="padding: 10px; border-radius: 8px;">
+                            <option value="all">All Orders</option>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== ORDER DETAIL SECTION ===== -->
+            <div id="orderDetail-section" class="content-section">
+                <div class="qod-page">
+                    <div class="qod-topbar">
+                        <div class="qod-topbar-left">
+                            <h2><i class="fas fa-receipt" style="color: #667eea;"></i> Order <span id="qodOrderId"></span></h2>
+                            <span class="status-badge" id="qodStatusBadge"></span>
+                        </div>
+                        <button class="back-btn" onclick="showSection('orders')">
+                            <i class="fas fa-arrow-left"></i> Back to Orders
+                        </button>
+                    </div>
+
+                    <div class="qod-grid">
+                        <!-- LEFT: order info + items + totals -->
+                        <div class="qod-main">
+                            <div class="qod-card">
+                                <div class="qod-meta-grid">
+                                    <div class="qod-meta-item">
+                                        <label>Order ID</label>
+                                        <span id="qodMetaOrderId"></span>
+                                    </div>
+                                    <div class="qod-meta-item">
+                                        <label>Order Date</label>
+                                        <span id="qodMetaDate"></span>
+                                    </div>
+                                    <div class="qod-meta-item">
+                                        <label>Customer Name</label>
+                                        <span id="qodMetaName"></span>
+                                    </div>
+                                    <div class="qod-meta-item">
+                                        <label>Customer Email</label>
+                                        <span id="qodMetaEmail"></span>
+                                    </div>
+                                    <div class="qod-meta-item">
+                                        <label>Customer Phone</label>
+                                        <span id="qodMetaPhone"></span>
+                                    </div>
+                                </div>
+
+                                <div class="qod-card-title"><i class="fas fa-box-open"></i> Order Items</div>
+                                <div class="table-responsive">
+                                    <table class="qod-items-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th class="qod-text-right">Quantity</th>
+                                                <th class="qod-text-right">Price</th>
+                                                <th class="qod-text-right">Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="qodItemsBody"></tbody>
+                                    </table>
+                                </div>
+
+                                <div class="qod-totals">
+                                    <div class="qod-totals-row">
+                                        <span>Subtotal</span>
+                                        <span id="qodSubtotal"></span>
+                                    </div>
+                                    <div class="qod-totals-row">
+                                        <span>Shipping Charge</span>
+                                        <span id="qodShipping"></span>
+                                    </div>
+                                    <div class="qod-totals-row qod-discount">
+                                        <span>Discount</span>
+                                        <span id="qodDiscount"></span>
+                                    </div>
+                                    <div class="qod-totals-row qod-grand-total">
+                                        <span>Grand Total</span>
+                                        <span id="qodGrandTotal"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: customer panel + shipping + summary + actions -->
+                        <div class="qod-sidebar">
+                            <div class="qod-card qod-customer-card">
+                                <div class="qod-card-title"><i class="fas fa-user"></i> Customer Information</div>
+                                <img class="qod-avatar" id="qodCustomerAvatar" src="" alt="Customer">
+                                <div class="qod-customer-name" id="qodCustomerName"></div>
+                                <div class="qod-contact-row"><i class="fas fa-envelope"></i> <span id="qodCustomerEmail"></span></div>
+                                <div class="qod-contact-row"><i class="fas fa-phone"></i> <span id="qodCustomerPhone"></span></div>
+                            </div>
+
+                            <div class="qod-card">
+                                <div class="qod-card-title"><i class="fas fa-map-marker-alt"></i> Shipping Address</div>
+                                <div class="qod-address-text" id="qodShippingAddress"></div>
+                            </div>
+
+                            <div class="qod-card">
+                                <div class="qod-card-title"><i class="fas fa-file-invoice-dollar"></i> Order Summary</div>
+                                <div class="qod-summary-row">
+                                    <span>Payment Method</span>
+                                    <span id="qodPaymentMethod"></span>
+                                </div>
+                                <div class="qod-summary-row">
+                                    <span>Payment Status</span>
+                                    <span class="status-badge" id="qodPaymentStatus"></span>
+                                </div>
+                                <div class="qod-summary-row">
+                                    <span>Transaction ID</span>
+                                    <span id="qodTransactionId"></span>
+                                </div>
+                                <div class="qod-summary-row qod-summary-total">
+                                    <span>Total Amount</span>
+                                    <span id="qodSummaryTotal"></span>
+                                </div>
+                            </div>
+
+                            <div class="qod-card">
+                                <div class="qod-card-title"><i class="fas fa-bolt"></i> Actions</div>
+                                <div class="qod-actions">
+                                    <button class="qod-btn qod-btn-accept" id="qodAcceptBtn" onclick="acceptOrder()">
+                                        <i class="fas fa-check-circle"></i> Accept Order
+                                    </button>
+                                    <button class="qod-btn qod-btn-reject" id="qodRejectBtn" onclick="rejectOrder()">
+                                        <i class="fas fa-times-circle"></i> Reject Order
+                                    </button>
+                                    <button class="qod-btn qod-btn-deliver" id="qodDeliverBtn" onclick="markOrderDelivered()">
+                                        <i class="fas fa-truck"></i> Mark as Delivered
                                     </button>
                                 </div>
-                                <div class="form-group">
-                                    <label><i class="fas fa-percent"></i> Discount (%)</label>
-                                    <input type="number" id="editProductDiscount" placeholder="e.g. 15" value="0">
-                                </div>
-                                <div class="form-group">
-                                    <label><i class="fas fa-star"></i> Badge Text</label>
-                                    <input type="text" id="editProductBadge" placeholder="e.g. Bestseller, New">
-                                </div>
-                                <div class="form-group">
-                                    <label><i class="fas fa-weight"></i> Weight/Unit</label>
-                                    <input type="text" id="editProductWeight" placeholder="e.g. 1L, 500g">
-                                </div>
-                                <div class="form-group">
-                                    <label><i class="fas fa-tag"></i> Brand</label>
-                                    <input type="text" id="editProductBrand" placeholder="e.g. Amul, Nestle">
-                                </div>
-                            </div>
-                            <input type="hidden" id="editProductId">
-                            <button type="submit" class="submit-btn">
-                                <i class="fas fa-save"></i> Update Product
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- ADMIN PROFILE SECTION -->
-                <div id="adminProfile-section" class="content-section">
-                    <div class="profile-page">
-                        <div class="profile-header">
-                            <h2><i class="fas fa-user-circle" style="color: #667eea;"></i> Admin Profile</h2>
-                            <button class="back-btn" onclick="showSection('dashboard')">
-                                <i class="fas fa-arrow-left"></i> Back to Dashboard
-                            </button>
-                        </div>
-                        <div class="profile-content">
-                            <div class="profile-avatar-large">
-                                <img src="{{sid.picture.url}}" height="100px" width="90px">
-                            </div>
-                            <h2 style="margin-bottom: 5px;">{{sid.firstname}} {{sid.lastname}}</h2>
-                            <p style="color: #667eea; margin-bottom: 20px;">Seller</p>
-                            <div class="profile-details-grid">
-                                <p><strong>Full Name:</strong>{{sid.firstname}} {{sid.lastname}}</p>
-                                <p><strong>Email:</strong>{{uid.email}}</p>
-                                <p><strong>Phone:</strong>{{sid.contactno}}</p>
-                                <p><strong>Status:</strong> <span class="status-badge status-active">Active</span></p>
-                                <p><strong>Joined:</strong> {{uid.created_at}}</p>
-                                <p><strong>Last Login:</strong> Today 10:30 AM</p>
-                            </div>
-                            <button class="submit-btn" style="margin-top: 30px; max-width: 300px;" onclick="showSection('editProfile')">
-                                <i class="fas fa-edit"></i> Edit Profile
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- EDIT PROFILE SECTION -->
-                <div id="editProfile-section" class="content-section">
-                    <div class="edit-profile-page">
-                        <div class="edit-profile-header">
-                            <h2><i class="fas fa-user-edit" style="color: #667eea;"></i> Edit Profile</h2>
-                            <button class="back-btn" onclick="showSection('adminProfile')">
-                                <i class="fas fa-arrow-left"></i> Back to Profile
-                            </button>
-                        </div>
-                        <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label>First Name</label>
-                                    <input type="text" value="{{sid.firstname}}" placeholder="Enter First name" name="firstname">
-                                </div>
-                                <div class="form-group">
-                                    <label>Last Name</label>
-                                    <input type="text" value="{{sid.lastname}}" placeholder="Enter Last name" name="lastname">
-                                </div>
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <input type="email" value="{{uid.email}}" placeholder="Enter email" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Phone</label>
-                                    <input type="tel" value="{{sid.contactno}}" placeholder="Enter phone" name="contactno">
-                                </div>
-                                <div class="form-group full-width">
-                                    <label>Seller Store Name</label>
-                                    <input type="text" value="{{sid.seller_stock_name}}" placeholder="Enter Store Name" name="seller_stock_name">
-                                </div>
-                                <div class="form-group">
-                                    <label>Picture</label>
-                                    <input type="file" name="picture">
-                                </div>
-                            </div>
-                            <input type="submit" class="submit-btn" value="Update Profile">
-                        </form>
-                    </div>
-                </div>
-
-                <!-- CATEGORIES SECTION -->
-                <div id="categories-section" class="content-section">
-                    <div class="form-container">
-                        <div class="form-title">
-                            <h2><i class="fas fa-tags" style="color: #667eea;"></i> Categories Management</h2>
-                            <button class="submit-btn" style="width: auto; padding: 10px 20px;" onclick="showSection('addCategory')">Add Category</button>
-                        </div>
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>ID</th><th>Category Name</th><th>Products Count</th><th>Status</th><th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="categoriesTableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ADD CATEGORY SECTION -->
-                <div id="addCategory-section" class="content-section">
-                    <div class="form-container">
-                        <div class="form-title">
-                            <h2><i class="fas fa-plus-circle" style="color: #667eea;"></i> Add New Category</h2>
-                            <button class="back-btn" onclick="showSection('categories')">
-                                <i class="fas fa-arrow-left"></i> Back to Categories
-                            </button>
-                        </div>
-                        <form onsubmit="saveCategory(event)">
-                            <div class="form-grid">
-                                <div class="form-group full-width">
-                                    <label>Category Name *</label>
-                                    <input type="text" id="categoryName" placeholder="e.g. Dairy, Vegetables" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Icon</label>
-                                    <input type="text" id="categoryIcon" placeholder="e.g. 🥛, 🥬" value="📦">
-                                </div>
-                                <div class="form-group">
-                                    <label>Status</label>
-                                    <select id="categoryStatus">
-                                        <option value="Active">Active</option>
-                                        <option value="Inactive">Inactive</option>
-                                    </select>
-                                </div>
-                                <div class="form-group full-width">
-                                    <label>Description</label>
-                                    <textarea id="categoryDesc" rows="3" placeholder="Category description..."></textarea>
-                                </div>
-                            </div>
-                            <button type="submit" class="submit-btn">
-                                <i class="fas fa-save"></i> Save Category
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- ORDERS SECTION -->
-                <div id="orders-section" class="content-section">
-                    <div class="form-container">
-                        <div class="form-title">
-                            <h2><i class="fas fa-shopping-cart" style="color: #667eea;"></i> Orders Management</h2>
-                            <select onchange="filterOrders()" style="padding: 10px; border-radius: 8px;">
-                                <option value="all">All Orders</option>
-                                <option value="pending">Pending</option>
-                                <option value="processing">Processing</option>
-                                <option value="delivered">Delivered</option>
-                            </select>
-                        </div>
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Order ID</th><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="ordersTableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- USERS SECTION -->
-                <div id="users-section" class="content-section">
-                    <div class="form-container">
-                        <div class="form-title">
-                            <h2><i class="fas fa-users" style="color: #667eea;"></i> Users Management</h2>
-                            <input type="text" placeholder="Search users..." style="padding: 10px; border-radius: 8px; border: 2px solid #e2e8f0;" onkeyup="searchUsers(this.value)">
-                        </div>
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>User ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="usersTableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PAYMENTS SECTION -->
-                <div id="payments-section" class="content-section">
-                    <div class="form-container">
-                        <div class="form-title">
-                            <h2><i class="fas fa-credit-card" style="color: #667eea;"></i> Payments Management</h2>
-                        </div>
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Payment ID</th><th>Order ID</th><th>Customer</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="paymentsTableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SETTINGS SECTION -->
-                <div id="settings-section" class="content-section">
-                    <div class="form-container">
-                        <div class="form-title">
-                            <h2><i class="fas fa-cog" style="color: #667eea;"></i> Settings</h2>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                            <div>
-                                <h3>General Settings</h3>
-                                <div class="form-group">
-                                    <label>Store Name</label>
-                                    <input type="text" value="QuickBasket" placeholder="Store name">
-                                </div>
-                                <div class="form-group">
-                                    <label>Store Email</label>
-                                    <input type="email" value="admin@quickbasket.com" placeholder="Store email">
-                                </div>
-                                <div class="form-group">
-                                    <label>Store Phone</label>
-                                    <input type="text" value="+91 98765 43210" placeholder="Store phone">
-                                </div>
-                                <div class="form-group">
-                                    <label>Delivery Time</label>
-                                    <input type="text" value="10-15 minutes" placeholder="Delivery time">
-                                </div>
-                            </div>
-                            <div>
-                                <h3>Payment Settings</h3>
-                                <div class="form-group">
-                                    <label>UPI ID</label>
-                                    <input type="text" value="quickbasket@okhdfcbank" placeholder="UPI ID">
-                                </div>
-                                <div class="form-group">
-                                    <label>Bank Account</label>
-                                    <input type="text" value="1234567890" placeholder="Account number">
-                                </div>
-                                <div class="form-group">
-                                    <label>IFSC Code</label>
-                                    <input type="text" value="HDFC0001234" placeholder="IFSC code">
-                                </div>
                             </div>
                         </div>
-                        <button class="submit-btn" style="margin-top: 20px;">Save Settings</button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- IMAGE LIGHTBOX POPUP -->
-        <div class="img-lightbox-overlay" id="imgLightbox" onclick="closeLightbox(event)">
-            <div class="img-lightbox-box">
-                <button class="img-lightbox-close" onclick="closeLightboxBtn()">
-                    <i class="fas fa-times"></i>
-                </button>
-                <img id="lightboxImg" src="" alt="Product Image">
-                <div class="img-lightbox-caption" id="lightboxCaption"></div>
+            <!-- USERS SECTION -->
+            <div id="users-section" class="content-section">
+                <div class="form-container">
+                    <div class="form-title">
+                        <h2><i class="fas fa-users" style="color: #667eea;"></i> Users Management</h2>
+                        <input type="text" placeholder="Search users..." style="padding: 10px; border-radius: 8px; border: 2px solid #e2e8f0;" onkeyup="searchUsers(this.value)">
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAYMENTS SECTION -->
+            <div id="payments-section" class="content-section">
+                <div class="form-container">
+                    <div class="form-title">
+                        <h2><i class="fas fa-credit-card" style="color: #667eea;"></i> Payments Management</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Payment ID</th><th>Order ID</th><th>Customer</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SETTINGS SECTION -->
+            <div id="settings-section" class="content-section">
+                <div class="form-container">
+                    <div class="form-title">
+                        <h2><i class="fas fa-cog" style="color: #667eea;"></i> Settings</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <div>
+                            <h3>General Settings</h3>
+                            <div class="form-group">
+                                <label>Store Name</label>
+                                <input type="text" value="QuickBasket" placeholder="Store name">
+                            </div>
+                            <div class="form-group">
+                                <label>Store Email</label>
+                                <input type="email" value="admin@quickbasket.com" placeholder="Store email">
+                            </div>
+                            <div class="form-group">
+                                <label>Store Phone</label>
+                                <input type="text" value="+91 98765 43210" placeholder="Store phone">
+                            </div>
+                            <div class="form-group">
+                                <label>Delivery Time</label>
+                                <input type="text" value="10-15 minutes" placeholder="Delivery time">
+                            </div>
+                        </div>
+                        <div>
+                            <h3>Payment Settings</h3>
+                            <div class="form-group">
+                                <label>UPI ID</label>
+                                <input type="text" value="quickbasket@okhdfcbank" placeholder="UPI ID">
+                            </div>
+                            <div class="form-group">
+                                <label>Bank Account</label>
+                                <input type="text" value="1234567890" placeholder="Account number">
+                            </div>
+                            <div class="form-group">
+                                <label>IFSC Code</label>
+                                <input type="text" value="HDFC0001234" placeholder="IFSC code">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="submit-btn" style="margin-top: 20px;">Save Settings</button>
+                </div>
             </div>
         </div>
+    </div>
 
-        <script>
-            let products = [
-                { id: 1, name: 'Fresh Cow Milk', category: 'Dairy', price: 58, stock: 150, image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=400', shortDesc: '1L • Toned • Protein', description: 'Fresh cow milk from local farms', discount: 15, badge: 'Fresh', weight: '1L', brand: 'Amul', specs: ['Toned', 'Pasteurized', 'High Protein'] },
-                { id: 2, name: 'Greek Yogurt', category: 'Dairy', price: 120, stock: 85, image: 'https://images.pexels.com/photos/3758844/pexels-photo-3758844.jpeg?auto=compress&cs=tinysrgb&w=400', shortDesc: '400g • Probiotic', description: 'Creamy probiotic yogurt', discount: 10, badge: 'Bestseller', weight: '400g', brand: 'Epigamia', specs: ['Probiotic', 'Creamy', 'High Protein'] },
-                { id: 3, name: 'Farm Tomatoes', category: 'Vegetables', price: 40, stock: 200, image: 'https://images.pexels.com/photos/1327838/pexels-photo-1327838.jpeg?auto=compress&cs=tinysrgb&w=400', shortDesc: '500g • Ripe • Juicy', description: 'Fresh farm tomatoes', discount: 0, badge: 'Organic', weight: '500g', brand: 'Local Farm', specs: ['Organic', 'Ripe', 'Juicy'] },
-                { id: 4, name: 'Fresh Potatoes', category: 'Vegetables', price: 32, stock: 300, image: 'https://images.pexels.com/photos/2286776/pexels-photo-2286776.jpeg?auto=compress&cs=tinysrgb&w=400', shortDesc: '1kg • Organically grown', description: 'Fresh potatoes', discount: 20, badge: '-20%', weight: '1kg', brand: 'Local Farm', specs: ['Organic', 'Fresh', 'Farm grown'] },
-                { id: 5, name: 'Fresh Spinach', category: 'Vegetables', price: 25, stock: 150, image: 'https://images.pexels.com/photos/2574616/pexels-photo-2574616.jpeg?auto=compress&cs=tinysrgb&w=400', shortDesc: '250g • Iron Rich', description: 'Fresh spinach leaves', discount: 0, badge: 'Fresh', weight: '250g', brand: 'Local Farm', specs: ['Iron Rich', 'Fresh', 'Organic'] }
-            ];
+    <!-- IMAGE LIGHTBOX POPUP -->
+    <div class="img-lightbox-overlay" id="imgLightbox" onclick="closeLightbox(event)">
+        <div class="img-lightbox-box">
+            <button class="img-lightbox-close" onclick="closeLightboxBtn()">
+                <i class="fas fa-times"></i>
+            </button>
+            <img id="lightboxImg" src="" alt="Product Image">
+            <div class="img-lightbox-caption" id="lightboxCaption"></div>
+        </div>
+    </div>
 
-            let categories = [
-                { id: 1, name: 'Dairy', icon: '🥛', count: 45, status: 'Active' },
-                { id: 2, name: 'Vegetables', icon: '🥬', count: 78, status: 'Active' },
-                { id: 3, name: 'Fruits', icon: '🍎', count: 56, status: 'Active' },
-                { id: 4, name: 'Grocery', icon: '🛒', count: 92, status: 'Active' },
-                { id: 5, name: 'Bakery', icon: '🥖', count: 34, status: 'Active' }
-            ];
+    <script>
+        let products = [
+            { id: 1, name: 'Fresh Cow Milk', category: 'Dairy', price: 58, stock: 150, image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=400', shortDesc: '1L • Toned • Protein', description: 'Fresh cow milk from local farms', discount: 15, badge: 'Fresh', weight: '1L', brand: 'Amul', specs: ['Toned', 'Pasteurized', 'High Protein'] },
+            { id: 2, name: 'Greek Yogurt', category: 'Dairy', price: 120, stock: 85, image: 'https://images.pexels.com/photos/3758844/pexels-photo-3758844.jpeg?auto=compress&cs=tinysrgb&w=400', shortDesc: '400g • Probiotic', description: 'Creamy probiotic yogurt', discount: 10, badge: 'Bestseller', weight: '400g', brand: 'Epigamia', specs: ['Probiotic', 'Creamy', 'High Protein'] },
+            { id: 3, name: 'Farm Tomatoes', category: 'Vegetables', price: 40, stock: 200, image: 'https://images.pexels.com/photos/1327838/pexels-photo-1327838.jpeg?auto=compress&cs=tinysrgb&w=400', shortDesc: '500g • Ripe • Juicy', description: 'Fresh farm tomatoes', discount: 0, badge: 'Organic', weight: '500g', brand: 'Local Farm', specs: ['Organic', 'Ripe', 'Juicy'] },
+            { id: 4, name: 'Fresh Potatoes', category: 'Vegetables', price: 32, stock: 300, image: 'https://images.pexels.com/photos/2286776/pexels-photo-2286776.jpeg?auto=compress&cs=tinysrgb&w=400', shortDesc: '1kg • Organically grown', description: 'Fresh potatoes', discount: 20, badge: '-20%', weight: '1kg', brand: 'Local Farm', specs: ['Organic', 'Fresh', 'Farm grown'] },
+            { id: 5, name: 'Fresh Spinach', category: 'Vegetables', price: 25, stock: 150, image: 'https://images.pexels.com/photos/2574616/pexels-photo-2574616.jpeg?auto=compress&cs=tinysrgb&w=400', shortDesc: '250g • Iron Rich', description: 'Fresh spinach leaves', discount: 0, badge: 'Fresh', weight: '250g', brand: 'Local Farm', specs: ['Iron Rich', 'Fresh', 'Organic'] }
+        ];
 
-            let orders = [
-                { id: 'ORD001', customer: 'John Doe', date: '2024-01-15', items: 3, total: 1234, status: 'Delivered' },
-                { id: 'ORD002', customer: 'Jane Smith', date: '2024-01-16', items: 5, total: 2345, status: 'Processing' },
-                { id: 'ORD003', customer: 'Bob Wilson', date: '2024-01-17', items: 1, total: 58, status: 'Pending' },
-                { id: 'ORD004', customer: 'Alice Brown', date: '2024-01-18', items: 2, total: 120, status: 'Delivered' },
-                { id: 'ORD005', customer: 'Charlie Davis', date: '2024-01-19', items: 4, total: 399, status: 'Processing' }
-            ];
+        let categories = [
+            { id: 1, name: 'Dairy', icon: '🥛', count: 45, status: 'Active' },
+            { id: 2, name: 'Vegetables', icon: '🥬', count: 78, status: 'Active' },
+            { id: 3, name: 'Fruits', icon: '🍎', count: 56, status: 'Active' },
+            { id: 4, name: 'Grocery', icon: '🛒', count: 92, status: 'Active' },
+            { id: 5, name: 'Bakery', icon: '🥖', count: 34, status: 'Active' }
+        ];
 
-            let users = [
-                { id: 1, name: 'John Doe', email: 'john@email.com', phone: '9876543210', role: 'User', status: 'Active', joined: '2024-01-01' },
-                { id: 2, name: 'Jane Smith', email: 'jane@email.com', phone: '9876543211', role: 'Manager', status: 'Active', joined: '2024-01-02' },
-                { id: 3, name: 'Bob Wilson', email: 'bob@email.com', phone: '9876543212', role: 'User', status: 'Inactive', joined: '2024-01-03' },
-                { id: 4, name: 'Alice Brown', email: 'alice@email.com', phone: '9876543213', role: 'Admin', status: 'Active', joined: '2024-01-04' },
-                { id: 5, name: 'Charlie Davis', email: 'charlie@email.com', phone: '9876543214', role: 'User', status: 'Active', joined: '2024-01-05' }
-            ];
+        let orders = [
+            { id: 'ORD001', customer: 'John Doe', email: 'johndoe@email.com', phone: '+1 234 567 8901', avatar: 'https://i.pravatar.cc/150?img=12',
+                date: '2024-01-15', items: 3, total: 1234, status: 'Delivered',
+                products: [
+                    { name: 'Fresh Cow Milk', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 2, price: 58 },
+                    { name: 'Greek Yogurt', image: 'https://images.pexels.com/photos/3758844/pexels-photo-3758844.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 1, price: 120 },
+                    { name: 'Farm Tomatoes', image: 'https://images.pexels.com/photos/1327838/pexels-photo-1327838.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 5, price: 40 }
+                ],
+                shipping: 60, discount: 80,
+                shippingAddress: { line1: '221B Baker Street, Apt 4', city: 'New York', state: 'NY', zip: '10001', country: 'United States' },
+                payment: { method: 'UPI', status: 'Paid', transactionId: 'TXN-9988776655' } },
 
-            let payments = [
-                { id: 'PAY001', order: 'ORD001', customer: 'John Doe', amount: 1234, method: 'UPI', date: '2024-01-15', status: 'Paid' },
-                { id: 'PAY002', order: 'ORD002', customer: 'Jane Smith', amount: 2345, method: 'Card', date: '2024-01-16', status: 'Paid' },
-                { id: 'PAY003', order: 'ORD003', customer: 'Bob Wilson', amount: 58, method: 'Cash', date: '2024-01-17', status: 'Unpaid' },
-                { id: 'PAY004', order: 'ORD004', customer: 'Alice Brown', amount: 120, method: 'UPI', date: '2024-01-18', status: 'Paid' },
-                { id: 'PAY005', order: 'ORD005', customer: 'Charlie Davis', amount: 399, method: 'Card', date: '2024-01-19', status: 'Paid' }
-            ];
+            { id: 'ORD002', customer: 'Jane Smith', email: 'janesmith@email.com', phone: '+1 234 567 8902', avatar: 'https://i.pravatar.cc/150?img=47',
+                date: '2024-01-16', items: 5, total: 2345, status: 'Processing',
+                products: [
+                    { name: 'Fresh Potatoes', image: 'https://images.pexels.com/photos/2286776/pexels-photo-2286776.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 4, price: 32 },
+                    { name: 'Fresh Spinach', image: 'https://images.pexels.com/photos/2574616/pexels-photo-2574616.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 3, price: 25 },
+                    { name: 'Greek Yogurt', image: 'https://images.pexels.com/photos/3758844/pexels-photo-3758844.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 2, price: 120 }
+                ],
+                shipping: 80, discount: 150,
+                shippingAddress: { line1: '48 Maple Avenue', city: 'Los Angeles', state: 'CA', zip: '90012', country: 'United States' },
+                payment: { method: 'Credit Card', status: 'Paid', transactionId: 'TXN-7765443322' } },
 
-            let currentDetailProductId = null;
+            { id: 'ORD003', customer: 'Bob Wilson', email: 'bobwilson@email.com', phone: '+1 234 567 8903', avatar: 'https://i.pravatar.cc/150?img=33',
+                date: '2024-01-17', items: 1, total: 58, status: 'Pending',
+                products: [
+                    { name: 'Fresh Cow Milk', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 1, price: 58 }
+                ],
+                shipping: 0, discount: 0,
+                shippingAddress: { line1: '9 Riverside Lane', city: 'Chicago', state: 'IL', zip: '60601', country: 'United States' },
+                payment: { method: 'Cash on Delivery', status: 'Unpaid', transactionId: '—' } },
 
-            window.onload = function() {
-                loadCategories();
-                loadOrders();
-                loadUsers();
-                loadPayments();
-                loadViewProducts();
+            { id: 'ORD004', customer: 'Alice Brown', email: 'alicebrown@email.com', phone: '+1 234 567 8904', avatar: 'https://i.pravatar.cc/150?img=29',
+                date: '2024-01-18', items: 2, total: 120, status: 'Delivered',
+                products: [
+                    { name: 'Farm Tomatoes', image: 'https://images.pexels.com/photos/1327838/pexels-photo-1327838.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 2, price: 40 },
+                    { name: 'Fresh Spinach', image: 'https://images.pexels.com/photos/2574616/pexels-photo-2574616.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 1, price: 25 }
+                ],
+                shipping: 30, discount: 15,
+                shippingAddress: { line1: '77 Sunset Boulevard', city: 'San Diego', state: 'CA', zip: '92101', country: 'United States' },
+                payment: { method: 'UPI', status: 'Paid', transactionId: 'TXN-3321987654' } },
+
+            { id: 'ORD005', customer: 'Charlie Davis', email: 'charliedavis@email.com', phone: '+1 234 567 8905', avatar: 'https://i.pravatar.cc/150?img=53',
+                date: '2024-01-19', items: 4, total: 399, status: 'Processing',
+                products: [
+                    { name: 'Fresh Potatoes', image: 'https://images.pexels.com/photos/2286776/pexels-photo-2286776.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 3, price: 32 },
+                    { name: 'Fresh Cow Milk', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 4, price: 58 },
+                    { name: 'Farm Tomatoes', image: 'https://images.pexels.com/photos/1327838/pexels-photo-1327838.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 2, price: 40 }
+                ],
+                shipping: 50, discount: 35,
+                shippingAddress: { line1: '15 Greenwood Street', city: 'Houston', state: 'TX', zip: '77002', country: 'United States' },
+                payment: { method: 'Debit Card', status: 'Paid', transactionId: 'TXN-1122334455' } }
+        ];
+
+        let currentOrderId = null;
+
+        let users = [
+            { id: 1, name: 'John Doe', email: 'john@email.com', phone: '9876543210', role: 'User', status: 'Active', joined: '2024-01-01' },
+            { id: 2, name: 'Jane Smith', email: 'jane@email.com', phone: '9876543211', role: 'Manager', status: 'Active', joined: '2024-01-02' },
+            { id: 3, name: 'Bob Wilson', email: 'bob@email.com', phone: '9876543212', role: 'User', status: 'Inactive', joined: '2024-01-03' },
+            { id: 4, name: 'Alice Brown', email: 'alice@email.com', phone: '9876543213', role: 'Admin', status: 'Active', joined: '2024-01-04' },
+            { id: 5, name: 'Charlie Davis', email: 'charlie@email.com', phone: '9876543214', role: 'User', status: 'Active', joined: '2024-01-05' }
+        ];
+
+        let payments = [
+            { id: 'PAY001', order: 'ORD001', customer: 'John Doe', amount: 1234, method: 'UPI', date: '2024-01-15', status: 'Paid' },
+            { id: 'PAY002', order: 'ORD002', customer: 'Jane Smith', amount: 2345, method: 'Card', date: '2024-01-16', status: 'Paid' },
+            { id: 'PAY003', order: 'ORD003', customer: 'Bob Wilson', amount: 58, method: 'Cash', date: '2024-01-17', status: 'Unpaid' },
+            { id: 'PAY004', order: 'ORD004', customer: 'Alice Brown', amount: 120, method: 'UPI', date: '2024-01-18', status: 'Paid' },
+            { id: 'PAY005', order: 'ORD005', customer: 'Charlie Davis', amount: 399, method: 'Card', date: '2024-01-19', status: 'Paid' }
+        ];
+
+        let currentDetailProductId = null;
+
+        window.onload = function() {
+            loadCategories();
+            loadOrders();
+            loadUsers();
+            loadPayments();
+            loadViewProducts();
+        };
+
+        // Toggle submenu function
+        function toggleSubmenu(menuId, element) {
+            // Close all other submenus first
+            let allSubmenus = document.querySelectorAll('.submenu');
+            let allNavLinks = document.querySelectorAll('.nav-link');
+            
+            allSubmenus.forEach(submenu => {
+                if(submenu.id !== menuId && submenu.classList.contains('active')) {
+                    submenu.classList.remove('active');
+                    // Reset icon rotation for other menus
+                    allNavLinks.forEach(link => {
+                        let icon = link.querySelector('i.fa-chevron-down');
+                        if(icon && link !== element) {
+                            icon.style.transform = 'rotate(0deg)';
+                        }
+                    });
+                }
+            });
+            
+            // Toggle current submenu
+            let submenu = document.getElementById(menuId);
+            let icon = element.querySelector('i.fa-chevron-down');
+            
+            submenu.classList.toggle('active');
+            icon.style.transform = submenu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        function showSection(section) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(section + '-section').classList.add('active');
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            
+            // Set active class based on section
+            if(section === 'dashboard') {
+                document.querySelectorAll('.nav-link')[0].classList.add('active');
+            }
+            else if(section === 'addProduct' || section === 'viewProducts') {
+                // Products menu active
+                document.querySelectorAll('.nav-link')[1].classList.add('active');
+            }
+            else if(section === 'addCategory' || section === 'categories') {
+                // Categories menu active
+                document.querySelectorAll('.nav-link')[2].classList.add('active');
+            }
+            else if(section === 'orders' || section === 'orderDetail') {
+                document.querySelectorAll('.nav-link')[3].classList.add('active');
+            }
+            else if(section === 'users') {
+                document.querySelectorAll('.nav-link')[4].classList.add('active');
+            }
+            else if(section === 'payments') {
+                document.querySelectorAll('.nav-link')[5].classList.add('active');
+            }
+            else if(section === 'settings') {
+                document.querySelectorAll('.nav-link')[6].classList.add('active');
+            }
+            
+            // Load data if needed
+            if(section === 'viewProducts') loadViewProducts();
+            else if(section === 'categories') loadCategories();
+        }
+
+
+        function loadViewProducts(filteredProducts = products) {
+            let grid = document.getElementById('viewProductsGrid');
+            if(!grid) return;
+            if(filteredProducts.length === 0) {
+                grid.innerHTML = '<div style="text-align:center; padding:40px; color:#a0aec0;"><i class="fas fa-box-open" style="font-size:3rem;"></i><p style="margin-top:10px;">Koi product nahi mila</p></div>';
+                return;
+            }
+            grid.innerHTML = filteredProducts.map(product => `
+                <div class="view-product-card" onclick="openProductDetail(${product.id})">
+                    <div class="view-product-card-img" style="background-image: url('${product.image}')">
+                        ${product.badge ? `<span class="view-product-card-badge">${product.badge}</span>` : ''}
+                    </div>
+                    <div class="view-product-card-body">
+                        <h4>${product.name}</h4>
+                        <span class="view-product-card-cat">${product.category}</span>
+                        <div class="view-product-card-price">₹${product.price}</div>
+                        <div class="view-product-card-stock">Stock: ${product.stock} units</div>
+                        <div class="view-card-click-hint"><i class="fas fa-eye"></i> Details dekhne ke liye click karo</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterViewProducts() {
+            let search = document.getElementById('viewSearchInput').value.toLowerCase();
+            let category = document.getElementById('viewCategoryFilter').value;
+            let filtered = products.filter(p => {
+                let matchSearch = p.name.toLowerCase().includes(search);
+                let matchCat = category === 'all' || p.category === category;
+                return matchSearch && matchCat;
+            });
+            loadViewProducts(filtered);
+        }
+
+        function openProductDetail(id) {
+            let product = products.find(p => p.id === id);
+            if(!product) return;
+            currentDetailProductId = id;
+            document.getElementById('detailProductImg').src = product.image || '';
+            document.getElementById('detailProductImg').onclick = function() {
+                openLightbox(product.image, product.name);
             };
-
-            // Toggle submenu function
-            function toggleSubmenu(menuId, element) {
-                // Close all other submenus first
-                let allSubmenus = document.querySelectorAll('.submenu');
-                let allNavLinks = document.querySelectorAll('.nav-link');
-                
-                allSubmenus.forEach(submenu => {
-                    if(submenu.id !== menuId && submenu.classList.contains('active')) {
-                        submenu.classList.remove('active');
-                        // Reset icon rotation for other menus
-                        allNavLinks.forEach(link => {
-                            let icon = link.querySelector('i.fa-chevron-down');
-                            if(icon && link !== element) {
-                                icon.style.transform = 'rotate(0deg)';
-                            }
-                        });
-                    }
-                });
-                
-                // Toggle current submenu
-                let submenu = document.getElementById(menuId);
-                let icon = element.querySelector('i.fa-chevron-down');
-                
-                submenu.classList.toggle('active');
-                icon.style.transform = submenu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+            document.getElementById('detailProductName').innerText = product.name || '';
+            document.getElementById('detailProductCategory').innerText = product.category || '';
+            document.getElementById('detailProductPrice').innerText = '₹' + product.price;
+            document.getElementById('detailProductStock').innerText = product.stock + ' units';
+            document.getElementById('detailProductBrand').innerText = product.brand || '-';
+            document.getElementById('detailProductWeight').innerText = product.weight || '-';
+            document.getElementById('detailProductDiscount').innerText = product.discount ? product.discount + '%' : '0%';
+            document.getElementById('detailProductShortDesc').innerText = product.shortDesc || '-';
+            document.getElementById('detailProductDesc').innerText = product.description || '-';
+            let badgeEl = document.getElementById('detailProductBadge');
+            if(product.badge) { badgeEl.innerText = product.badge; badgeEl.style.display = 'inline-block'; }
+            else { badgeEl.style.display = 'none'; }
+            let specsEl = document.getElementById('detailProductSpecs');
+            if(product.specs && product.specs.length > 0) {
+                specsEl.innerHTML = product.specs.map(s => `<span class="spec-tag">${s}</span>`).join('');
+            } else {
+                specsEl.innerHTML = '<span style="color:#a0aec0; font-size:0.85rem;">Koi features add nahi hain</span>';
             }
+            showSection('productDetail');
+        }
 
-            function showSection(section) {
-                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-                document.getElementById(section + '-section').classList.add('active');
-                
-                // Remove active class from all nav links
-                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-                
-                // Set active class based on section
-                if(section === 'dashboard') {
-                    document.querySelectorAll('.nav-link')[0].classList.add('active');
-                }
-                else if(section === 'addProduct' || section === 'viewProducts') {
-                    // Products menu active
-                    document.querySelectorAll('.nav-link')[1].classList.add('active');
-                }
-                else if(section === 'addCategory' || section === 'categories') {
-                    // Categories menu active
-                    document.querySelectorAll('.nav-link')[2].classList.add('active');
-                }
-                else if(section === 'orders') {
-                    document.querySelectorAll('.nav-link')[3].classList.add('active');
-                }
-                else if(section === 'users') {
-                    document.querySelectorAll('.nav-link')[4].classList.add('active');
-                }
-                else if(section === 'payments') {
-                    document.querySelectorAll('.nav-link')[5].classList.add('active');
-                }
-                else if(section === 'settings') {
-                    document.querySelectorAll('.nav-link')[6].classList.add('active');
-                }
-                
-                // Load data if needed
-                if(section === 'viewProducts') loadViewProducts();
-                else if(section === 'categories') loadCategories();
+        function deleteProductFromDetail() {
+            if(confirm('Kya aap sach mein yeh product delete karna chahte ho?')) {
+                products = products.filter(p => p.id !== currentDetailProductId);
+                updateStats();
+                loadViewProducts();
+                alert('✅ Product successfully delete ho gaya!');
+                showSection('viewProducts');
             }
+        }
 
+        function openEditFromDetail() {
+            let product = products.find(p => p.id === currentDetailProductId);
+            if(!product) return;
+            document.getElementById('editProductId').value = product.id;
+            document.getElementById('editProductName').value = product.name || '';
+            document.getElementById('editProductCategory').value = product.category || '';
+            document.getElementById('editProductPrice').value = product.price || 0;
+            document.getElementById('editProductStock').value = product.stock || 0;
+            document.getElementById('editProductImage').value = product.image || '';
+            document.getElementById('editProductShortDesc').value = product.shortDesc || '';
+            document.getElementById('editProductDescription').value = product.description || '';
+            document.getElementById('editProductDiscount').value = product.discount || 0;
+            document.getElementById('editProductBadge').value = product.badge || '';
+            document.getElementById('editProductWeight').value = product.weight || '';
+            document.getElementById('editProductBrand').value = product.brand || '';
+            updateEditImagePreview(product.image || '');
+            let specsContainer = document.getElementById('editSpecsContainer');
+            specsContainer.innerHTML = '';
+            let specsToLoad = (product.specs && product.specs.length > 0) ? product.specs : ['', '', ''];
+            specsToLoad.forEach((spec, index) => {
+                let div = document.createElement('div');
+                div.className = 'spec-item';
+                div.innerHTML = `<input type="text" value="${spec}" placeholder="Feature ${index + 1}" class="spec-input">`;
+                specsContainer.appendChild(div);
+            });
+            showSection('editProductForm');
+        }
 
-            function loadViewProducts(filteredProducts = products) {
-                let grid = document.getElementById('viewProductsGrid');
-                if(!grid) return;
-                if(filteredProducts.length === 0) {
-                    grid.innerHTML = '<div style="text-align:center; padding:40px; color:#a0aec0;"><i class="fas fa-box-open" style="font-size:3rem;"></i><p style="margin-top:10px;">Koi product nahi mila</p></div>';
-                    return;
-                }
-                grid.innerHTML = filteredProducts.map(product => `
-                    <div class="view-product-card" onclick="openProductDetail(${product.id})">
-                        <div class="view-product-card-img" style="background-image: url('${product.image}')">
-                            ${product.badge ? `<span class="view-product-card-badge">${product.badge}</span>` : ''}
-                        </div>
-                        <div class="view-product-card-body">
-                            <h4>${product.name}</h4>
-                            <span class="view-product-card-cat">${product.category}</span>
-                            <div class="view-product-card-price">₹${product.price}</div>
-                            <div class="view-product-card-stock">Stock: ${product.stock} units</div>
-                            <div class="view-card-click-hint"><i class="fas fa-eye"></i> Details dekhne ke liye click karo</div>
-                        </div>
-                    </div>
-                `).join('');
+        function goBackToDetail() {
+            if(currentDetailProductId) { openProductDetail(currentDetailProductId); }
+            else { showSection('viewProducts'); }
+        }
+
+        function updateEditImagePreview(url) {
+            let preview = document.getElementById('editImagePreview');
+            if(preview) {
+                if(url) { preview.style.backgroundImage = `url('${url}')`; preview.style.backgroundSize = 'cover'; preview.style.backgroundPosition = 'center'; preview.innerHTML = ''; }
+                else { preview.style.backgroundImage = ''; preview.innerHTML = '<i class="fas fa-cloud-upload-alt" style="font-size: 2rem;"></i><p>Image preview will appear here</p>'; }
             }
+        }
 
-            function filterViewProducts() {
-                let search = document.getElementById('viewSearchInput').value.toLowerCase();
-                let category = document.getElementById('viewCategoryFilter').value;
-                let filtered = products.filter(p => {
-                    let matchSearch = p.name.toLowerCase().includes(search);
-                    let matchCat = category === 'all' || p.category === category;
-                    return matchSearch && matchCat;
-                });
-                loadViewProducts(filtered);
-            }
+        function addEditSpecField() {
+            let container = document.getElementById('editSpecsContainer');
+            if(container) { let div = document.createElement('div'); div.className = 'spec-item'; div.innerHTML = '<input type="text" placeholder="New Feature" class="spec-input">'; container.appendChild(div); }
+        }
 
-            function openProductDetail(id) {
-                let product = products.find(p => p.id === id);
-                if(!product) return;
-                currentDetailProductId = id;
-                document.getElementById('detailProductImg').src = product.image || '';
-                document.getElementById('detailProductImg').onclick = function() {
-                    openLightbox(product.image, product.name);
-                };
-                document.getElementById('detailProductName').innerText = product.name || '';
-                document.getElementById('detailProductCategory').innerText = product.category || '';
-                document.getElementById('detailProductPrice').innerText = '₹' + product.price;
-                document.getElementById('detailProductStock').innerText = product.stock + ' units';
-                document.getElementById('detailProductBrand').innerText = product.brand || '-';
-                document.getElementById('detailProductWeight').innerText = product.weight || '-';
-                document.getElementById('detailProductDiscount').innerText = product.discount ? product.discount + '%' : '0%';
-                document.getElementById('detailProductShortDesc').innerText = product.shortDesc || '-';
-                document.getElementById('detailProductDesc').innerText = product.description || '-';
-                let badgeEl = document.getElementById('detailProductBadge');
-                if(product.badge) { badgeEl.innerText = product.badge; badgeEl.style.display = 'inline-block'; }
-                else { badgeEl.style.display = 'none'; }
-                let specsEl = document.getElementById('detailProductSpecs');
-                if(product.specs && product.specs.length > 0) {
-                    specsEl.innerHTML = product.specs.map(s => `<span class="spec-tag">${s}</span>`).join('');
-                } else {
-                    specsEl.innerHTML = '<span style="color:#a0aec0; font-size:0.85rem;">Koi features add nahi hain</span>';
-                }
-                showSection('productDetail');
-            }
+        function updateProduct(e) {
+            e.preventDefault();
+            let id = parseInt(document.getElementById('editProductId').value);
+            let index = products.findIndex(p => p.id === id);
+            if(index !== -1) {
+                let specs = [];
+                document.querySelectorAll('#editSpecsContainer .spec-input').forEach(input => { if(input.value.trim()) specs.push(input.value.trim()); });
+                products[index] = { id, name: document.getElementById('editProductName').value, category: document.getElementById('editProductCategory').value, price: parseInt(document.getElementById('editProductPrice').value) || 0, stock: parseInt(document.getElementById('editProductStock').value) || 0, image: document.getElementById('editProductImage').value, shortDesc: document.getElementById('editProductShortDesc').value, description: document.getElementById('editProductDescription').value, discount: document.getElementById('editProductDiscount').value || 0, badge: document.getElementById('editProductBadge').value, weight: document.getElementById('editProductWeight').value, brand: document.getElementById('editProductBrand').value, specs };
+                updateStats(); loadViewProducts();
+                alert('✅ Product successfully update ho gaya!');
+                openProductDetail(id);
+            } else { alert('❌ Product nahi mila!'); }
+        }
 
-            function deleteProductFromDetail() {
-                if(confirm('Kya aap sach mein yeh product delete karna chahte ho?')) {
-                    products = products.filter(p => p.id !== currentDetailProductId);
-                    updateStats();
-                    loadViewProducts();
-                    alert('✅ Product successfully delete ho gaya!');
-                    showSection('viewProducts');
-                }
-            }
+        function loadCategories() {
+            let tbody = document.getElementById('categoriesTableBody');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            categories.forEach(cat => {
+                tbody.innerHTML += `<tr><td>${cat.id}</td><td>${cat.icon || '📦'} ${cat.name}</td><td>${cat.count}</td><td><span class="status-badge status-active">${cat.status}</span></td><td><div class="table-actions"><button class="table-action-btn edit-btn" onclick="editCategory(${cat.id})"><i class="fas fa-edit"></i> Edit</button><button class="table-action-btn delete-btn" onclick="deleteCategory(${cat.id})"><i class="fas fa-trash"></i> Delete</button></div></td></tr>`;
+            });
+        }
 
-            function openEditFromDetail() {
-                let product = products.find(p => p.id === currentDetailProductId);
-                if(!product) return;
-                document.getElementById('editProductId').value = product.id;
-                document.getElementById('editProductName').value = product.name || '';
-                document.getElementById('editProductCategory').value = product.category || '';
-                document.getElementById('editProductPrice').value = product.price || 0;
-                document.getElementById('editProductStock').value = product.stock || 0;
-                document.getElementById('editProductImage').value = product.image || '';
-                document.getElementById('editProductShortDesc').value = product.shortDesc || '';
-                document.getElementById('editProductDescription').value = product.description || '';
-                document.getElementById('editProductDiscount').value = product.discount || 0;
-                document.getElementById('editProductBadge').value = product.badge || '';
-                document.getElementById('editProductWeight').value = product.weight || '';
-                document.getElementById('editProductBrand').value = product.brand || '';
-                updateEditImagePreview(product.image || '');
-                let specsContainer = document.getElementById('editSpecsContainer');
-                specsContainer.innerHTML = '';
-                let specsToLoad = (product.specs && product.specs.length > 0) ? product.specs : ['', '', ''];
-                specsToLoad.forEach((spec, index) => {
-                    let div = document.createElement('div');
-                    div.className = 'spec-item';
-                    div.innerHTML = `<input type="text" value="${spec}" placeholder="Feature ${index + 1}" class="spec-input">`;
-                    specsContainer.appendChild(div);
-                });
-                showSection('editProductForm');
-            }
+        function saveCategory(e) {
+            e.preventDefault();
+            let name = document.getElementById('categoryName').value;
+            let icon = document.getElementById('categoryIcon').value || '📦';
+            let status = document.getElementById('categoryStatus').value;
+            categories.push({ id: categories.length + 1, name, icon, count: 0, status });
+            loadCategories(); updateStats(); alert('✅ Category add ho gayi!'); showSection('categories');
+            document.getElementById('categoryName').value = ''; document.getElementById('categoryIcon').value = '📦'; document.getElementById('categoryStatus').value = 'Active'; document.getElementById('categoryDesc').value = '';
+        }
 
-            function goBackToDetail() {
-                if(currentDetailProductId) { openProductDetail(currentDetailProductId); }
-                else { showSection('viewProducts'); }
-            }
+        function editCategory(id) { let cat = categories.find(c => c.id === id); let newName = prompt('Category name edit karo:', cat.name); if(newName) { cat.name = newName; loadCategories(); alert('Category update ho gayi!'); } }
+        function deleteCategory(id) { if(confirm('Kya aap yeh category delete karna chahte ho?')) { categories = categories.filter(c => c.id !== id); loadCategories(); updateStats(); alert('Category delete ho gayi!'); } }
 
-            function updateEditImagePreview(url) {
-                let preview = document.getElementById('editImagePreview');
-                if(preview) {
-                    if(url) { preview.style.backgroundImage = `url('${url}')`; preview.style.backgroundSize = 'cover'; preview.style.backgroundPosition = 'center'; preview.innerHTML = ''; }
-                    else { preview.style.backgroundImage = ''; preview.innerHTML = '<i class="fas fa-cloud-upload-alt" style="font-size: 2rem;"></i><p>Image preview will appear here</p>'; }
-                }
-            }
+        function loadOrders(filteredOrders = orders) {
+            let tbody = document.getElementById('ordersTableBody');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            filteredOrders.forEach(order => {
+                let sc = statusBadgeClass(order.status);
+                tbody.innerHTML += `<tr><td>#${order.id}</td><td>${order.customer}</td><td>${order.date}</td><td>${order.items} items</td><td>₹${order.total}</td><td><span class="status-badge ${sc}">${order.status}</span></td><td><div class="table-actions"><button class="table-action-btn view-btn" onclick="openOrderDetail('${order.id}')"><i class="fas fa-eye"></i> View</button></div></td></tr>`;
+            });
+        }
 
-            function addEditSpecField() {
-                let container = document.getElementById('editSpecsContainer');
-                if(container) { let div = document.createElement('div'); div.className = 'spec-item'; div.innerHTML = '<input type="text" placeholder="New Feature" class="spec-input">'; container.appendChild(div); }
-            }
+        function filterOrders() { let filter = event.target.value; loadOrders(filter === 'all' ? orders : orders.filter(o => o.status.toLowerCase() === filter)); }
 
-            function updateProduct(e) {
-                e.preventDefault();
-                let id = parseInt(document.getElementById('editProductId').value);
-                let index = products.findIndex(p => p.id === id);
-                if(index !== -1) {
-                    let specs = [];
-                    document.querySelectorAll('#editSpecsContainer .spec-input').forEach(input => { if(input.value.trim()) specs.push(input.value.trim()); });
-                    products[index] = { id, name: document.getElementById('editProductName').value, category: document.getElementById('editProductCategory').value, price: parseInt(document.getElementById('editProductPrice').value) || 0, stock: parseInt(document.getElementById('editProductStock').value) || 0, image: document.getElementById('editProductImage').value, shortDesc: document.getElementById('editProductShortDesc').value, description: document.getElementById('editProductDescription').value, discount: document.getElementById('editProductDiscount').value || 0, badge: document.getElementById('editProductBadge').value, weight: document.getElementById('editProductWeight').value, brand: document.getElementById('editProductBrand').value, specs };
-                    updateStats(); loadViewProducts();
-                    alert('✅ Product successfully update ho gaya!');
-                    openProductDetail(id);
-                } else { alert('❌ Product nahi mila!'); }
-            }
+        // ===== ORDER DETAIL VIEW =====
+        function statusBadgeClass(status) {
+            let s = status.toLowerCase();
+            if(s === 'delivered') return 'status-delivered';
+            if(s === 'processing') return 'status-processing';
+            if(s === 'rejected') return 'status-rejected';
+            return 'status-pending';
+        }
 
-            function loadCategories() {
-                let tbody = document.getElementById('categoriesTableBody');
-                if(!tbody) return;
-                tbody.innerHTML = '';
-                categories.forEach(cat => {
-                    tbody.innerHTML += `<tr><td>${cat.id}</td><td>${cat.icon || '📦'} ${cat.name}</td><td>${cat.count}</td><td><span class="status-badge status-active">${cat.status}</span></td><td><div class="table-actions"><button class="table-action-btn edit-btn" onclick="editCategory(${cat.id})"><i class="fas fa-edit"></i> Edit</button><button class="table-action-btn delete-btn" onclick="deleteCategory(${cat.id})"><i class="fas fa-trash"></i> Delete</button></div></td></tr>`;
-                });
-            }
+        function openOrderDetail(id) {
+            let order = orders.find(o => o.id === id);
+            if(!order) { alert('❌ Order nahi mila!'); return; }
+            currentOrderId = id;
 
-            function saveCategory(e) {
-                e.preventDefault();
-                let name = document.getElementById('categoryName').value;
-                let icon = document.getElementById('categoryIcon').value || '📦';
-                let status = document.getElementById('categoryStatus').value;
-                categories.push({ id: categories.length + 1, name, icon, count: 0, status });
-                loadCategories(); updateStats(); alert('✅ Category add ho gayi!'); showSection('categories');
-                document.getElementById('categoryName').value = ''; document.getElementById('categoryIcon').value = '📦'; document.getElementById('categoryStatus').value = 'Active'; document.getElementById('categoryDesc').value = '';
-            }
+            document.getElementById('qodOrderId').innerText = '#' + order.id;
+            document.getElementById('qodMetaOrderId').innerText = '#' + order.id;
+            document.getElementById('qodMetaDate').innerText = order.date;
+            document.getElementById('qodMetaName').innerText = order.customer;
+            document.getElementById('qodMetaEmail').innerText = order.email;
+            document.getElementById('qodMetaPhone').innerText = order.phone;
 
-            function editCategory(id) { let cat = categories.find(c => c.id === id); let newName = prompt('Category name edit karo:', cat.name); if(newName) { cat.name = newName; loadCategories(); alert('Category update ho gayi!'); } }
-            function deleteCategory(id) { if(confirm('Kya aap yeh category delete karna chahte ho?')) { categories = categories.filter(c => c.id !== id); loadCategories(); updateStats(); alert('Category delete ho gayi!'); } }
+            let statusBadge = document.getElementById('qodStatusBadge');
+            statusBadge.innerText = order.status;
+            statusBadge.className = 'status-badge ' + statusBadgeClass(order.status);
 
-            function loadOrders(filteredOrders = orders) {
-                let tbody = document.getElementById('ordersTableBody');
-                if(!tbody) return;
-                tbody.innerHTML = '';
-                filteredOrders.forEach(order => {
-                    let sc = order.status.toLowerCase() === 'delivered' ? 'status-delivered' : order.status.toLowerCase() === 'processing' ? 'status-processing' : 'status-pending';
-                    tbody.innerHTML += `<tr><td>#${order.id}</td><td>${order.customer}</td><td>${order.date}</td><td>${order.items} items</td><td>₹${order.total}</td><td><span class="status-badge ${sc}">${order.status}</span></td><td><div class="table-actions"><button class="table-action-btn edit-btn" onclick="editOrder('${order.id}')"><i class="fas fa-edit"></i> Edit</button></div></td></tr>`;
-                });
-            }
+            // Items table
+            let itemsBody = document.getElementById('qodItemsBody');
+            itemsBody.innerHTML = '';
+            let subtotal = 0;
+            order.products.forEach(p => {
+                let lineTotal = p.qty * p.price;
+                subtotal += lineTotal;
+                itemsBody.innerHTML += `<tr>
+                    <td><div class="qod-product-cell"><img src="${p.image}" alt="${p.name}"><span>${p.name}</span></div></td>
+                    <td class="qod-text-right">${p.qty}</td>
+                    <td class="qod-text-right">₹${p.price}</td>
+                    <td class="qod-text-right qod-subtotal-cell">₹${lineTotal}</td>
+                </tr>`;
+            });
 
-            function filterOrders() { let filter = event.target.value; loadOrders(filter === 'all' ? orders : orders.filter(o => o.status.toLowerCase() === filter)); }
-            function editOrder(id) { alert('Edit order feature aane wala hai!'); }
+            let grandTotal = subtotal + order.shipping - order.discount;
+            document.getElementById('qodSubtotal').innerText = '₹' + subtotal;
+            document.getElementById('qodShipping').innerText = '₹' + order.shipping;
+            document.getElementById('qodDiscount').innerText = '- ₹' + order.discount;
+            document.getElementById('qodGrandTotal').innerText = '₹' + grandTotal;
 
-            function loadUsers(filteredUsers = users) {
-                let tbody = document.getElementById('usersTableBody');
-                if(!tbody) return;
-                tbody.innerHTML = '';
-                filteredUsers.forEach(user => {
-                    tbody.innerHTML += `<tr><td>${user.id}</td><td>${user.name}</td><td>${user.email}</td><td>${user.phone}</td><td><span class="user-role">${user.role}</span></td><td><span class="status-badge ${user.status === 'Active' ? 'status-active' : 'status-inactive'}">${user.status}</span></td><td>${user.joined}</td><td><div class="table-actions"><button class="table-action-btn edit-btn" onclick="editUser(${user.id})"><i class="fas fa-edit"></i> Edit</button><button class="table-action-btn delete-btn" onclick="deleteUser(${user.id})"><i class="fas fa-trash"></i> Delete</button></div></td></tr>`;
-                });
-            }
+            // Customer panel
+            document.getElementById('qodCustomerAvatar').src = order.avatar;
+            document.getElementById('qodCustomerName').innerText = order.customer;
+            document.getElementById('qodCustomerEmail').innerText = order.email;
+            document.getElementById('qodCustomerPhone').innerText = order.phone;
 
-            function searchUsers(query) { loadUsers(!query ? users : users.filter(u => u.name.toLowerCase().includes(query.toLowerCase()) || u.email.toLowerCase().includes(query.toLowerCase()))); }
-            function editUser(id) { alert('Edit user feature aane wala hai!'); }
-            function deleteUser(id) { if(confirm('Kya aap yeh user delete karna chahte ho?')) { users = users.filter(u => u.id !== id); loadUsers(); alert('User delete ho gaya!'); } }
+            // Shipping address
+            let addr = order.shippingAddress;
+            document.getElementById('qodShippingAddress').innerHTML = `<strong>${order.customer}</strong>${addr.line1}<br>${addr.city}, ${addr.state} - ${addr.zip}<br>${addr.country}<br>${order.phone}`;
 
-            function openLightbox(imgSrc, caption) {
-                document.getElementById('lightboxImg').src = imgSrc;
-                document.getElementById('lightboxCaption').innerText = caption || '';
-                document.getElementById('imgLightbox').classList.add('open');
-                document.body.style.overflow = 'hidden';
-            }
-            function closeLightbox(e) { if(e.target === document.getElementById('imgLightbox')) { document.getElementById('imgLightbox').classList.remove('open'); document.body.style.overflow = ''; } }
-            function closeLightboxBtn() { document.getElementById('imgLightbox').classList.remove('open'); document.body.style.overflow = ''; }
-            document.addEventListener('keydown', function(e) { if(e.key === 'Escape') closeLightboxBtn(); });
+            // Order summary
+            document.getElementById('qodPaymentMethod').innerText = order.payment.method;
+            let payBadge = document.getElementById('qodPaymentStatus');
+            payBadge.innerText = order.payment.status;
+            payBadge.className = 'status-badge ' + (order.payment.status === 'Paid' ? 'status-paid' : 'status-unpaid');
+            document.getElementById('qodTransactionId').innerText = order.payment.transactionId;
+            document.getElementById('qodSummaryTotal').innerText = '₹' + grandTotal;
 
-            function loadPayments() {
-                let tbody = document.getElementById('paymentsTableBody');
-                if(!tbody) return;
-                tbody.innerHTML = '';
-                payments.forEach(p => {
-                    tbody.innerHTML += `<tr><td>${p.id}</td><td>#${p.order}</td><td>${p.customer}</td><td>₹${p.amount}</td><td>${p.method}</td><td>${p.date}</td><td><span class="status-badge ${p.status === 'Paid' ? 'status-paid' : 'status-unpaid'}">${p.status}</span></td></tr>`;
-                });
-            }
-        </script>
-    </body>
-    </html>
+            // Action buttons state
+            let acceptBtn = document.getElementById('qodAcceptBtn');
+            let rejectBtn = document.getElementById('qodRejectBtn');
+            let deliverBtn = document.getElementById('qodDeliverBtn');
+            let isFinal = order.status === 'Delivered' || order.status === 'Rejected';
+            acceptBtn.disabled = isFinal || order.status === 'Processing' || order.status === 'Delivered';
+            rejectBtn.disabled = isFinal;
+            deliverBtn.disabled = order.status !== 'Processing';
+
+            showSection('orderDetail');
+        }
+
+        function acceptOrder() {
+            let order = orders.find(o => o.id === currentOrderId);
+            if(!order) return;
+            order.status = 'Processing';
+            alert('✅ Order accept ho gaya! Ab Processing mein hai.');
+            openOrderDetail(order.id);
+            loadOrders();
+        }
+
+        function rejectOrder() {
+            let order = orders.find(o => o.id === currentOrderId);
+            if(!order) return;
+            if(!confirm('Kya aap is order ko reject karna chahte ho?')) return;
+            order.status = 'Rejected';
+            alert('🚫 Order reject ho gaya.');
+            openOrderDetail(order.id);
+            loadOrders();
+        }
+
+        function markOrderDelivered() {
+            let order = orders.find(o => o.id === currentOrderId);
+            if(!order) return;
+            order.status = 'Delivered';
+            alert('📦 Order delivered mark ho gaya!');
+            openOrderDetail(order.id);
+            loadOrders();
+        }
+
+        function loadUsers(filteredUsers = users) {
+            let tbody = document.getElementById('usersTableBody');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            filteredUsers.forEach(user => {
+                tbody.innerHTML += `<tr><td>${user.id}</td><td>${user.name}</td><td>${user.email}</td><td>${user.phone}</td><td><span class="user-role">${user.role}</span></td><td><span class="status-badge ${user.status === 'Active' ? 'status-active' : 'status-inactive'}">${user.status}</span></td><td>${user.joined}</td><td><div class="table-actions"><button class="table-action-btn edit-btn" onclick="editUser(${user.id})"><i class="fas fa-edit"></i> Edit</button><button class="table-action-btn delete-btn" onclick="deleteUser(${user.id})"><i class="fas fa-trash"></i> Delete</button></div></td></tr>`;
+            });
+        }
+
+        function searchUsers(query) { loadUsers(!query ? users : users.filter(u => u.name.toLowerCase().includes(query.toLowerCase()) || u.email.toLowerCase().includes(query.toLowerCase()))); }
+        function editUser(id) { alert('Edit user feature aane wala hai!'); }
+        function deleteUser(id) { if(confirm('Kya aap yeh user delete karna chahte ho?')) { users = users.filter(u => u.id !== id); loadUsers(); alert('User delete ho gaya!'); } }
+
+        function openLightbox(imgSrc, caption) {
+            document.getElementById('lightboxImg').src = imgSrc;
+            document.getElementById('lightboxCaption').innerText = caption || '';
+            document.getElementById('imgLightbox').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeLightbox(e) { if(e.target === document.getElementById('imgLightbox')) { document.getElementById('imgLightbox').classList.remove('open'); document.body.style.overflow = ''; } }
+        function closeLightboxBtn() { document.getElementById('imgLightbox').classList.remove('open'); document.body.style.overflow = ''; }
+        document.addEventListener('keydown', function(e) { if(e.key === 'Escape') closeLightboxBtn(); });
+
+        function loadPayments() {
+            let tbody = document.getElementById('paymentsTableBody');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            payments.forEach(p => {
+                tbody.innerHTML += `<tr><td>${p.id}</td><td>#${p.order}</td><td>${p.customer}</td><td>₹${p.amount}</td><td>${p.method}</td><td>${p.date}</td><td><span class="status-badge ${p.status === 'Paid' ? 'status-paid' : 'status-unpaid'}">${p.status}</span></td></tr>`;
+            });
+        }
+    </script>
+</body>
+</html>
