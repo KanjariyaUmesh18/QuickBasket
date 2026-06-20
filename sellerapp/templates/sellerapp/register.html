@@ -1,0 +1,76 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register · Manager / User</title>
+    <!-- Font Awesome 6 (keeping only for other icons if needed) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'sellerapp/css/register.css' %}">
+</head>
+<body>
+    <!-- Register Card with simple dropdown -->
+    <div class="register-card">
+        <div class="form-header">
+            <i class="fas fa-user-plus"></i>
+            <h2>Register</h2>
+        </div>
+
+        <form  method="post" action="{% url 'register' %}">
+        {% csrf_token %}
+            
+            
+            <!-- SIMPLE DROPDOWN - NO ICONS -->
+            <div class="role-group">
+                <span class="role-label">Select Role</span>
+                <select id="role" name="role" class="role-select" required name="role">
+                    <option value="" disabled selected>— Choose role —</option>
+                    <option value="seller">seller</option>
+                    <option value="customer">customer</option>
+                </select>
+            </div>
+
+            <!-- Name and Phone Row -->
+            <div class="name-phone-row">
+                <div class="input-field" style="flex: 2;">
+                    <label><i class="fas fa-user-circle"></i> First Name</label>
+                    <input type="text" placeholder="John Doe" required name="firstname">
+                </div>
+                <div class="input-field" style="flex: 2;">
+                    <label><i class="fas fa-user-circle"></i> Last Name</label>
+                    <input type="tel" placeholder="98765 43210" required name="lastname">
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="input-field">
+                <label><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" placeholder="john.doe@example.com" required name="email">
+            </div>
+             
+            <div class="input-field" style="flex: 2;">
+                    <label><i class="fas fa-phone-alt"></i> Phone</label>
+                    <input type="tel" placeholder="98765 43210" required name="contactno">
+                </div>
+            
+         
+
+            <!-- <button type="submit" class="register-btn">
+                <span>Create Account</span>
+                <i class="fas fa-arrow-right"></i>
+            </button> -->
+
+            <input type="submit" class="register-btn" value="Create account">
+
+            <div class="login-hint">
+                Already have an account? <a href="{% url 'login' %}">Sign in</a>
+                <span style="display: block; font-size:0.75rem; margin-top:6px; color: #a0aec0;">
+                    Manager / Admin registration
+                </span>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

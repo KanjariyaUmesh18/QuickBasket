@@ -1,0 +1,210 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product · QuickBasket</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'sellerapp/css/index.css' %}">
+</head>
+<body>
+    <div class="container">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-store"></i>
+                <h2>QuickBasket</h2>
+                <p>Admin Panel</p>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link active" onclick="toggleSubmenu()">
+                        <i class="fas fa-box"></i> Products
+                        <i class="fas fa-chevron-down" id="chevronIcon" style="margin-left:auto; font-size:0.8rem; transform:rotate(180deg);"></i>
+                    </div>
+                    <ul class="submenu active" id="productsSubmenu">
+                        <li class="submenu-item">
+                            <a href="{% url 'login' %}" class="submenu-link" style="text-decoration:none;">
+                                <i class="fas fa-plus-circle"></i> Add Product
+                            </a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="{% url 'view_products' %}" class="submenu-link" style="text-decoration:none;">
+                                <i class="fas fa-eye"></i> View Products
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-tags"></i> Categories
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-shopping-cart"></i> Orders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-users"></i> Users
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-credit-card"></i> Payments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="admin-info">
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span>3</span>
+                    </div>
+                    <button class="logout-btn">
+                        <a class="fas fa-sign-out-alt" href="{% url 'logout' %}"></a> Logout
+                    </button>
+                    <div class="admin-profile">
+                        <div class="admin-avatar">
+                            <img src="{{ sid.picture.url }}" class="top-profile-img">
+                        </div>
+                        <div>
+                            <p style="font-weight:600;">{{ sid.role }}</p>
+                            <p style="font-size:0.8rem;">{{ sid.firstname }} {{ sid.lastname }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EDIT PRODUCT CONTENT -->
+            <div class="content-section active">
+                <div class="form-container">
+                    <div class="form-title">
+                        <h2><i class="fas fa-edit" style="color:#667eea;"></i> Edit Product</h2>
+                        <a href="{% url 'product_details' p.id %}" class="back-btn">
+                            <i class="fas fa-arrow-left"></i> Back to Details
+                        </a>
+                    </div>
+
+                    <form method="POST" action="{% url 'edit_product' p.id %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-grid">
+
+                            <div class="form-group">
+                                <label><i class="fas fa-tag"></i> Product Name *</label>
+                                <input type="text" name="product_name" value="{{ p.product_name }}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-layer-group"></i> Category *</label>
+                                <select name="product_category" value = "{{ p.product_category }}" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Dairy" >🥛 Dairy</option>
+                                    <option value="Vegetables">🥬 Vegetables</option>
+                                    <option value="Fruits" >🍎 Fruits</option>
+                                    <option value="Grocery" >🛒 Grocery</option>
+                                    <option value="Bakery">🥖 Bakery</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-rupee-sign"></i> Price (₹) *</label>
+                                <input type="number" name="product_price" value="{{ p.product_price }}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-boxes"></i> Stock Quantity *</label>
+                                <input type="number" name="stock_qty" value="{{ p.stock_qty }}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-percent"></i> Discount (%)</label>
+                                <input type="number" name="discount" value="{{ p.discount|default:0 }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-star"></i> Badge Text</label>
+                                <input type="text" name="badge_text" value="{{ p.badge_text|default:'' }}" placeholder="e.g. Bestseller, New">
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-weight"></i> Weight/Unit</label>
+                                <input type="text" name="weight_unit" value="{{ p.weight_unit|default:'' }}" placeholder="e.g. 1L, 500g">
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-tag"></i> Brand</label>
+                                <input type="text" name="brand" value="{{ p.brand|default:'' }}" placeholder="e.g. Amul, Nestle">
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label><i class="fas fa-file-alt"></i> Description</label>
+                                <textarea rows="4" name="description" placeholder="Detailed product description...">{{ p.description|default:'' }}</textarea>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label><i class="fas fa-image"></i> Product Image</label>
+                                <input type="file" name="picture" accept="image/*" onchange="previewImage(event)">
+                                <!-- Current image preview -->
+                                <small style="color:#718096; margin-top:6px; display:block;">
+                                    <i class="fas fa-info-circle"></i> 
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Update Product
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleSubmenu() {
+            let submenu = document.getElementById('productsSubmenu');
+            let icon = document.getElementById('chevronIcon');
+            submenu.classList.toggle('active');
+            icon.style.transform = submenu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        // Nai image select karne pe preview update karo
+        function previewImage(event) {
+            let file = event.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>

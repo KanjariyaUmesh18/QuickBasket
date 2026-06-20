@@ -1,0 +1,858 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | QuickBasket</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           RESET & BASE
+        ============================================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ============================================================
+           BUBBLES BACKGROUND
+        ============================================================ */
+        .bubbles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bubbles span {
+            position: absolute;
+            bottom: -150px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 50%;
+            animation: rise 22s linear infinite;
+        }
+
+        .bubbles span:nth-child(1) { width: 60px; height: 60px; left: 5%; animation-duration: 22s; }
+        .bubbles span:nth-child(2) { width: 30px; height: 30px; left: 18%; animation-duration: 17s; animation-delay: 2s; }
+        .bubbles span:nth-child(3) { width: 80px; height: 80px; left: 30%; animation-duration: 26s; animation-delay: 4s; }
+        .bubbles span:nth-child(4) { width: 45px; height: 45px; left: 48%; animation-duration: 19s; animation-delay: 1s; }
+        .bubbles span:nth-child(5) { width: 70px; height: 70px; left: 62%; animation-duration: 23s; animation-delay: 3s; }
+        .bubbles span:nth-child(6) { width: 40px; height: 40px; left: 78%; animation-duration: 15s; animation-delay: 5s; }
+        .bubbles span:nth-child(7) { width: 55px; height: 55px; left: 92%; animation-duration: 25s; animation-delay: 2s; }
+
+        @keyframes rise {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+            100% { transform: translateY(-110vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* ============================================================
+           WRAPPER
+        ============================================================ */
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================================
+           HEADER
+        ============================================================ */
+        .header {
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(12px);
+            border-radius: 22px;
+            padding: 14px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255,255,255,0.5);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-icon {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            padding: 10px 12px;
+            border-radius: 16px;
+            color: white;
+            font-size: 1.4rem;
+            box-shadow: 0 8px 15px -5px #667eea;
+            transform: rotate(-4deg);
+            transition: 0.3s;
+        }
+        .logo-icon:hover { transform: rotate(0deg) scale(1.08); }
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .delivery-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(102,126,234,0.12);
+            padding: 5px 14px;
+            border-radius: 40px;
+            margin-top: 3px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .delivery-pill i { color: #48bb78; animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .hbtn {
+            padding: 8px 16px;
+            border-radius: 13px;
+            border: 2px solid transparent;
+            background: white;
+            color: #444;
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            text-decoration: none;
+        }
+        .hbtn i { color: #667eea; }
+        .hbtn:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 18px -10px #667eea;
+        }
+        .hbtn img {
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .hbtn.logout {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+        }
+        .hbtn.logout i,
+        .hbtn.logout a {
+            color: white;
+            text-decoration: none;
+        }
+        .cart-dot {
+            background: #fbbf24;
+            color: #2d3748;
+            padding: 2px 7px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        /* ============================================================
+           BREADCRUMB
+        ============================================================ */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(6px);
+            border-radius: 14px;
+            margin-bottom: 24px;
+            color: white;
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+        }
+        .breadcrumb a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .breadcrumb a:hover { color: white; }
+        .breadcrumb .current {
+            color: white;
+            font-weight: 600;
+        }
+        .breadcrumb .sep {
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* ============================================================
+           PRODUCT DETAIL MAIN
+        ============================================================ */
+        .product-detail-wrap {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 26px;
+            padding: 30px;
+            box-shadow: 0 24px 55px -15px rgba(0,0,0,0.22);
+            border: 2px solid rgba(255,255,255,0.6);
+            animation: fadeUp 0.5s ease;
+        }
+
+        @keyframes fadeUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .product-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        /* ============================================================
+           PRODUCT IMAGE
+        ============================================================ */
+        .product-image-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f7fafc;
+            border-radius: 20px;
+            overflow: hidden;
+            aspect-ratio: 1/1;
+            border: 2px solid #e2e8f0;
+            position: relative;
+        }
+
+        .product-image-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-image-section:hover img {
+            transform: scale(1.05);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: linear-gradient(145deg, #fbbf24, #f59e0b);
+            color: #2d3748;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            box-shadow: 0 4px 12px -4px #f59e0b;
+            z-index: 2;
+        }
+
+        /* ============================================================
+           PRODUCT INFO
+        ============================================================ */
+        .info-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .product-category {
+            display: inline-block;
+            background: rgba(102,126,234,0.12);
+            color: #667eea;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            width: fit-content;
+        }
+
+        .product-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #2d3748;
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+
+        /* ============================================================
+           SPECIFICATION ITEMS
+        ============================================================ */
+        .spec-items {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 24px;
+            background: #f7fafc;
+            padding: 16px 20px;
+            border-radius: 16px;
+            margin: 8px 0 12px 0;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .spec-item:last-child,
+        .spec-item:nth-last-child(2) {
+            border-bottom: none;
+        }
+
+        .spec-label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.85rem;
+        }
+
+        .spec-value {
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 0.85rem;
+        }
+
+        .spec-value.price {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.1rem;
+        }
+
+        .spec-value.discount {
+            color: #fc8181;
+        }
+
+        .spec-value.badge-tag {
+            background: linear-gradient(145deg, #fbbf24, #f59e0b);
+            padding: 2px 12px;
+            border-radius: 20px;
+            color: #2d3748;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        .spec-value.in-stock {
+            color: #48bb78;
+        }
+
+        /* ============================================================
+           DESCRIPTION
+        ============================================================ */
+        .description-section {
+            margin-top: 8px;
+            padding-top: 12px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .description-section .desc-label {
+            font-weight: 700;
+            color: #4a5568;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .description-section p {
+            color: #4a5568;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* ============================================================
+           ADD TO CART SECTION
+        ============================================================ */
+        .add-to-cart-section {
+            display: flex;
+            gap: 14px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+            padding-top: 16px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .qty-selector {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .qty-selector button {
+            width: 48px;
+            height: 48px;
+            border: none;
+            background: #f7fafc;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #667eea;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .qty-selector button:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .qty-selector span {
+            width: 50px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #2d3748;
+        }
+
+        .atc-primary {
+            flex: 1;
+            min-width: 200px;
+            padding: 14px 32px;
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 8px 22px -8px #667eea;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .atc-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 30px -10px #667eea;
+        }
+
+        .wishlist-btn {
+            padding: 14px 20px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 1.2rem;
+            color: #718096;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .wishlist-btn:hover {
+            border-color: #fc8181;
+            color: #fc8181;
+            transform: translateY(-3px);
+        }
+
+        .wishlist-btn.active {
+            border-color: #fc8181;
+            color: #fc8181;
+            background: #fff5f5;
+        }
+
+        /* ============================================================
+           BACK LINK
+        ============================================================ */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 24px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            padding: 10px 18px;
+            background: rgba(255,255,255,0.12);
+            border-radius: 14px;
+            backdrop-filter: blur(6px);
+        }
+
+        .back-link:hover {
+            color: white;
+            transform: translateX(-4px);
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* ============================================================
+           TOAST NOTIFICATION
+        ============================================================ */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 14px 28px;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 999;
+            border-left: 4px solid #48bb78;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast i {
+            color: #48bb78;
+            font-size: 1.4rem;
+        }
+
+        .toast .toast-msg {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+
+        .toast .toast-msg span {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+        ============================================================ */
+        @media (max-width: 1024px) {
+            .product-detail-grid {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .product-detail-wrap {
+                padding: 18px;
+            }
+
+            .product-title {
+                font-size: 1.5rem;
+            }
+
+            .spec-items {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+
+            .spec-item:last-child {
+                border-bottom: none;
+            }
+
+            .header {
+                padding: 12px 16px;
+            }
+
+            .logo-text h1 {
+                font-size: 1.2rem;
+            }
+
+            .add-to-cart-section {
+                flex-direction: column;
+            }
+
+            .atc-primary {
+                min-width: auto;
+            }
+
+            .toast {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                padding: 12px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-image-section {
+                aspect-ratio: 1/1;
+            }
+
+            .spec-items {
+                padding: 12px 14px;
+            }
+
+            .spec-item {
+                flex-direction: column;
+                gap: 2px;
+                padding: 8px 0;
+            }
+
+            .spec-label {
+                font-size: 0.75rem;
+            }
+
+            .spec-value {
+                font-size: 0.85rem;
+            }
+
+            .product-title {
+                font-size: 1.3rem;
+            }
+
+            .qty-selector button {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .qty-selector span {
+                width: 40px;
+                font-size: 1rem;
+            }
+
+            .atc-primary {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* ============================================================
+           SCROLLBAR
+        ============================================================ */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="bubbles">
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span>
+</div>
+
+<div class="wrap">
+    <!-- HEADER -->
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-crown"></i></div>
+            <div class="logo-text">
+                <h1>QuickBasket</h1>
+                <div class="delivery-pill">
+                    <i class="fas fa-bolt"></i> Delivery in
+                    <strong style="margin-left:4px;background:linear-gradient(145deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent">10 min</strong>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="fire-badge" style="background:linear-gradient(145deg,#fbbf24,#f59e0b);color:white;padding:7px 16px;border-radius:40px;font-weight:700;font-size:.85rem;box-shadow:0 6px 14px -5px #f59e0b;animation:bob 2s ease-in-out infinite;">
+                <i class="fas fa-fire"></i> Great Deals!
+            </div>
+            <a href="{% url 'userpanel' %}" class="hbtn">
+                <img src="{{ sid.picture.url }}" width="28" height="28">
+                <span>{{ sid.firstname }} {{ sid.lastname }}</span>
+            </a>
+            <a href="{% url 'login' %}" class="hbtn logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+            <a href="cart.html" class="hbtn">
+                <i class="fas fa-shopping-cart"></i> Cart
+                <span class="cart-dot">3</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+        <a href="{% url 'userpanel' %}"><i class="fas fa-home"></i> Home</a>
+        <span class="sep">/</span>
+        <a href="#">{{p.product_category}}</a>
+        <span class="sep">/</span>
+        <span class="current">{{p.product_name}}</span>
+    </div>
+
+    <!-- PRODUCT DETAIL -->
+    <div class="product-detail-wrap">
+        <div class="product-detail-grid">
+            <!-- PRODUCT IMAGE -->
+            <div class="product-image-section">
+                <img src="{{p.picture.url}}" >
+                <span class="product-badge">🔥 PURE</span>
+            </div>
+
+            <!-- PRODUCT INFO -->
+            <div class="info-section">
+                <span class="product-category">
+                    <i class="fas fa-tag"></i> {{p.product_category}}
+                </span>
+
+                <h1 class="product-title">{{p.product_name}}</h1>
+
+                <!-- Specifications Grid -->
+                <div class="spec-items">
+                    <div class="spec-item">
+                        <span class="spec-label">PRICE</span>
+                        <span class="spec-value price">{{p.product_price}}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">STOCK</span>
+                        <span class="spec-value in-stock">{{p.stock_qty}}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">BRAND</span>
+                        <span class="spec-value">{{p.brand}}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">WEIGHT/UNIT</span>
+                        <span class="spec-value">{{p.weight_unit}}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">DISCOUNT</span>
+                        <span class="spec-value discount">{{p.discount}}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">BADGE</span>
+                        <span class="spec-value badge-tag">{{p.badge_text}}</span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="description-section">
+                    <span class="desc-label">DESCRIPTION</span>
+                    <p>{{p.description}}</p>
+                </div>
+
+                <!-- Add to Cart Section -->
+                <div class="add-to-cart-section">
+                    <div class="qty-selector">
+                        <button onclick="adjustQty(-1)">−</button>
+                        <span id="qtyDisplay">1</span>
+                        <button onclick="adjustQty(1)">+</button>
+                    </div>
+                    <a class="atc-primary" href="{% url 'add-to-cart' pk=p.id %}" style="text-decoration: none;">
+                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                    </a>
+                    <button class="wishlist-btn" onclick="toggleWishlist(this)">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BACK LINK -->
+    <a href="{% url 'userpanel' %}" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Products
+    </a>
+
+</div>
+
+<!-- ============================================================
+   TOAST NOTIFICATION
+============================================================ -->
+<div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span class="toast-msg"><span id="toastProduct">Basmati Rice</span> added to cart! 🛒</span>
+</div>
+
+<!-- ============================================================
+   JAVASCRIPT
+============================================================ -->
+<script>
+    // Quantity selector
+    let qty = 1;
+    function adjustQty(val) {
+        qty = Math.max(1, qty + val);
+        document.getElementById('qtyDisplay').textContent = qty;
+    }
+
+    // Add to Cart (Detail page)
+    function addToCartDetail() {
+        const productName = document.querySelector('.product-title').textContent;
+        const toast = document.getElementById('toast');
+        const productSpan = document.getElementById('toastProduct');
+        
+        productSpan.textContent = productName;
+        toast.classList.add('show');
+        
+        // Auto hide after 3 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+        
+        // Update cart dot (optional visual feedback)
+        const cartDot = document.querySelector('.cart-dot');
+        let currentCount = parseInt(cartDot.textContent) || 0;
+        cartDot.textContent = currentCount + qty;
+        cartDot.style.transform = 'scale(1.5)';
+        setTimeout(() => {
+            cartDot.style.transform = 'scale(1)';
+        }, 300);
+    }
+
+    // Wishlist toggle
+    function toggleWishlist(btn) {
+        const icon = btn.querySelector('i');
+        if (icon.classList.contains('far')) {
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            btn.classList.add('active');
+            showToastMessage('❤️ Added to wishlist!');
+        } else {
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            btn.classList.remove('active');
+        }
+    }
+
+    // Toast message helper
+    function showToastMessage(msg) {
+        const toast = document.getElementById('toast');
+        const productSpan = document.getElementById('toastProduct');
+        productSpan.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2500);
+    }
+
+    // Close toast on click
+    document.getElementById('toast').addEventListener('click', function() {
+        this.classList.remove('show');
+    });
+</script>
+
+</body>
+</html>

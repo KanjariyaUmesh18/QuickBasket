@@ -1,0 +1,232 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Categories · QuickBasket</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'sellerapp/css/index.css' %}">
+</head>
+<body>
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-store"></i>
+            <h2>QuickBasket</h2>
+            <p>Admin Panel</p>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+
+            <!-- Products submenu -->
+            <li class="nav-item">
+                <div class="nav-link" onclick="toggleSubmenu('productsSubmenu','chevronProducts')">
+                    <i class="fas fa-box"></i> Products
+                    <i class="fas fa-chevron-down" id="chevronProducts" style="margin-left:auto;font-size:0.8rem;"></i>
+                </div>
+                <ul class="submenu" id="productsSubmenu">
+                    <li class="submenu-item">
+                        <a href="{% url 'login' %}" class="submenu-link" style="text-decoration:none;">
+                            <i class="fas fa-plus-circle"></i> Add Product
+                        </a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="{% url 'view_products' %}" class="submenu-link" style="text-decoration:none;">
+                            <i class="fas fa-eye"></i> View Products
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- Categories submenu — ACTIVE -->
+            <li class="nav-item">
+                <div class="nav-link active" onclick="toggleSubmenu('categoriesSubmenu','chevronCat')">
+                    <i class="fas fa-tags"></i> Categories
+                    <i class="fas fa-chevron-up" id="chevronCat" style="margin-left:auto;font-size:0.8rem;"></i>
+                </div>
+                <ul class="submenu active" id="categoriesSubmenu">
+                    <li class="submenu-item">
+                        <a href="{% url 'add_category' %}" class="submenu-link" style="text-decoration:none;">
+                            <i class="fas fa-plus-circle"></i> Add Category
+                        </a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="{% url 'view_categories' %}" class="submenu-link active" style="text-decoration:none;">
+                            <i class="fas fa-eye"></i> View Categories
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                    <i class="fas fa-shopping-cart"></i> Orders
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                    <i class="fas fa-users"></i> Users
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                    <i class="fas fa-credit-card"></i> Payments
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search...">
+            </div>
+            <div class="admin-info">
+                <div class="notification">
+                    <i class="fas fa-bell"></i>
+                    <span>3</span>
+                </div>
+                <button class="logout-btn">
+                    <a class="fas fa-sign-out-alt" href="{% url 'logout' %}"></a> Logout
+                </button>
+                <div class="admin-profile">
+                    <div class="admin-avatar">
+                        <img src="{{ sid.picture.url }}" class="top-profile-img">
+                    </div>
+                    <div>
+                        <p style="font-weight:600;">{{ sid.role }}</p>
+                        <p style="font-size:0.8rem;">{{ sid.firstname }} {{ sid.lastname }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW CATEGORIES CONTENT -->
+        <div class="content-section active">
+            <div class="form-container">
+                <div class="form-title">
+                    <h2><i class="fas fa-tags" style="color:#667eea;"></i> View Categories</h2>
+                    <a href="{% url 'add_category' %}" class="add-btn">
+                        <i class="fas fa-plus"></i> Add Category
+                    </a>
+                </div>
+
+                <!-- Search -->
+                <div class="search-categories">
+                    <input type="text" id="searchInput" placeholder="🔍 Category search karo..." onkeyup="filterCategories()">
+                </div>
+
+                <!-- Table -->
+                <table class="cat-table" id="catTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Category Name</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="catTableBody">
+                        {% for cat in categories %}
+                        <tr data-name="{{ cat.category_name|lower }}">
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <div class="cat-name">
+                                    {{ cat.categories_name }}
+                                </div>
+                            </td>
+                            <td>
+                                {% if cat.status == "Active" %}
+                                    <span class="badge-active">Active</span>
+                                {% else %}
+                                    <span class="badge-inactive">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{cat.description}}
+                            </td>
+                            <td>
+                                <div class="action-btns">
+                                    <a href="{% url 'edit_category' cat.id %}" class="btn-edit">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                </div>
+                            </td>
+
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <i class="fas fa-tags"></i>
+                                    <p>Koi category nahi mili. Pehle category add karo!</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- No result after JS filter -->
+                <div class="no-result" id="noResult">
+                    <i class="fas fa-search"></i>
+                    <p>Koi category match nahi hua</p>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Generic submenu toggle
+    function toggleSubmenu(id, iconId) {
+        let submenu = document.getElementById(id);
+        let icon = document.getElementById(iconId);
+        submenu.classList.toggle('active');
+        let isOpen = submenu.classList.contains('active');
+        icon.className = isOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+        icon.style.marginLeft = 'auto';
+        icon.style.fontSize = '0.8rem';
+    }
+
+    // Search filter
+    function filterCategories() {
+        let search = document.getElementById('searchInput').value.toLowerCase();
+        let rows = document.querySelectorAll('#catTableBody tr[data-name]');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            let name = row.dataset.name || '';
+            if (name.includes(search)) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        document.getElementById('noResult').style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ p.product_name }} · QuickBasket</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'sellerapp/css/index.css' %}">
+
+    
+</head>
+<body>
+    <div class="container">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-store"></i>
+                <h2>QuickBasket</h2>
+                <p>Admin Panel</p>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link active" onclick="toggleSubmenu()">
+                        <i class="fas fa-box"></i> Products
+                        <i class="fas fa-chevron-down" id="chevronIcon" style="margin-left:auto; font-size:0.8rem; transform:rotate(180deg);"></i>
+                    </div>
+                    <ul class="submenu active" id="productsSubmenu">
+                        <li class="submenu-item">
+                            <a href="{% url 'login' %}" class="submenu-link" style="text-decoration:none;">
+                                <i class="fas fa-plus-circle"></i> Add Product
+                            </a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="{% url 'view_products' %}" class="submenu-link" style="text-decoration:none;">
+                                <i class="fas fa-eye"></i> View Products
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-tags"></i> Categories
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-shopping-cart"></i> Orders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-users"></i> Users
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-credit-card"></i> Payments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="admin-info">
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span>3</span>
+                    </div>
+                    <button class="logout-btn">
+                        <a class="fas fa-sign-out-alt" href="{% url 'logout' %}"></a> Logout
+                    </button>
+                    <div class="admin-profile">
+                        <div class="admin-avatar">
+                            <img src="{{ sid.picture.url }}" class="top-profile-img">
+                        </div>
+                        <div>
+                            <p style="font-weight:600;">{{ sid.role }}</p>
+                            <p style="font-size:0.8rem;">{{ sid.firstname }} {{ sid.lastname }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRODUCT DETAIL CONTENT -->
+            <div class="content-section active" style="padding: 10px;">
+                <div class="product-detail-card">
+
+                    <!-- Header -->
+                    <div class="product-detail-header">
+                        <h2><i class="fas fa-box" style="color:#667eea;"></i> Product Details</h2>
+                        <a href="{% url 'view_products' %}" class="back-btn">
+                            <i class="fas fa-arrow-left"></i> Back to Products
+                        </a>
+                    </div>
+
+                    <!-- Image + Info -->
+                    <div class="product-detail-top">
+
+                        <!-- Image -->
+                    
+                        <div class="product-detail-img-wrap" onclick="openLightbox()">
+                            <img src="{{ p.picture.url }}" alt="{{ p.product_name }}">
+                            <span class="product-detail-badge">{{ p.badge_text }}</span>
+                        </div>
+
+                        <!-- Info -->
+                        <div class="product-detail-info">
+                            <h2 class="product-detail-name">{{ p.product_name }}</h2>
+                            <span class="product-detail-category">{{ p.product_category }}</span>
+
+                            <div class="product-detail-meta">
+                                <div class="detail-meta-item">
+                                    <label>💰 Price</label>
+                                    <span class="detail-price-big">₹{{ p.product_price }}</span>
+                                </div>
+                                <div class="detail-meta-item">
+                                    <label>📦 Stock</label>
+                                    <span>{{ p.stock_qty }} units</span>
+                                </div>
+                                <div class="detail-meta-item">
+                                    <label>🏷️ Brand</label>
+                                    <span>{{ p.brand }}</span>
+                                </div>
+                                <div class="detail-meta-item">
+                                    <label>⚖️ Weight/Unit</label>
+                                    <span>{{ p.weight_unit }}</span>
+                                </div>
+                                <div class="detail-meta-item">
+                                    <label>🔖 Discount</label>
+                                    <span>{{ p.discount }}%</span>
+                                </div>
+                                <div class="detail-meta-item">
+                                    <label>⭐ Badge</label>
+                                    <span>{{ p.badge_text }}</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label style="font-size:0.75rem; color:#718096; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">📄 Description</label>
+                                <p class="product-detail-desc">{{ p.description }}</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="product-detail-actions">
+                        <a class="btn-edit-product" href="{% url 'edit_product' p.id %}">
+                            <i class="fas fa-edit"></i> Edit Product
+                        </a>
+                        <form method="POST" action="{% url 'delete_product' p.id %}" style="flex:1; display:flex;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-delete-product" style="width:100%;">
+                                <i class="fas fa-trash-alt"></i> Delete Product
+                            </button>
+                        </form>
+                    </div>
+                    
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- IMAGE LIGHTBOX -->
+    <div class="img-lightbox-overlay" id="imgLightbox" onclick="closeLightbox(event)">
+        <div class="img-lightbox-box">
+            <button class="img-lightbox-close" onclick="closeLightboxBtn()">
+                <i class="fas fa-times"></i>
+            </button>
+            <img src="{{ p.picture.url }}" alt="{{ p.product_name }}">
+            <div class="img-lightbox-caption">{{ p.product_name }}</div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSubmenu() {
+            let submenu = document.getElementById('productsSubmenu');
+            let icon = document.getElementById('chevronIcon');
+            submenu.classList.toggle('active');
+            icon.style.transform = submenu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        function openLightbox() {
+            document.getElementById('imgLightbox').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeLightbox(e) {
+            if (e.target === document.getElementById('imgLightbox')) {
+                document.getElementById('imgLightbox').classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        }
+        function closeLightboxBtn() {
+            document.getElementById('imgLightbox').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLightboxBtn();
+        });
+    </script>
+</body>
+</html>

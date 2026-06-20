@@ -1,0 +1,113 @@
+
+/* ===== VIEW PRODUCTS GRID ===== */
+.view-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+.view-product-card {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid transparent;
+    text-decoration: none;
+    display: block;
+}
+.view-product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(102,126,234,0.18);
+    border-color: #667eea;
+}
+.view-product-card-img {
+    height: 170px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    background-color: #f0f0f0;
+}
+.view-product-card-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+.view-product-card-body {
+    padding: 14px;
+}
+.view-product-card-body h4 {
+    margin: 0 0 4px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1a202c;
+}
+.view-product-card-cat {
+    font-size: 0.78rem;
+    color: #3182ce;
+    background: #ebf4ff;
+    padding: 2px 8px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+.view-product-card-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #667eea;
+}
+.view-product-card-stock {
+    font-size: 0.78rem;
+    color: #718096;
+    margin-top: 2px;
+}
+.view-card-click-hint {
+    font-size: 0.72rem;
+    color: #a0aec0;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+/* search bar */
+.search-products {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+.search-products input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.search-products input:focus { border-color: #667eea; }
+.search-products select {
+    padding: 10px 14px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    cursor: pointer;
+}
+.no-result {
+    display: none;
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: #a0aec0;
+    background: white;
+    border-radius: 14px;
+}
+.no-result i { font-size: 2.5rem; display: block; margin-bottom: 8px; }

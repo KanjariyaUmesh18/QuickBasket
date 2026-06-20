@@ -1,0 +1,152 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Category · QuickBasket</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'sellerapp/css/index.css' %}">
+</head>
+<body>
+    <div class="container">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-store"></i>
+                <h2>QuickBasket</h2>
+                <p>Admin Panel</p>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" onclick="toggleSubmenu()">
+                        <i class="fas fa-box"></i> Products
+                        <i class="fas fa-chevron-down" id="chevronIcon" style="margin-left:auto; font-size:0.8rem;"></i>
+                    </div>
+                    <ul class="submenu" id="productsSubmenu">
+                        <li class="submenu-item">
+                            <a href="{% url 'login' %}" class="submenu-link" style="text-decoration:none;">
+                                <i class="fas fa-plus-circle"></i> Add Product
+                            </a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="{% url 'view_products' %}" class="submenu-link" style="text-decoration:none;">
+                                <i class="fas fa-eye"></i> View Products
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" >
+                        <i class="fas fa-tags"></i>
+                        <a href="{% url 'add_category' %}" class="categorie-nav-link"> Categories</a>
+                    </div>
+                </li>
+                <!-- sdfgerihj -->
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-shopping-cart"></i> Orders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-users"></i> Users
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-credit-card"></i> Payments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="admin-info">
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span>3</span>
+                    </div>
+                    <button class="logout-btn">
+                        <a class="fas fa-sign-out-alt" href="{% url 'logout' %}"></a> Logout
+                    </button>
+                    <div class="admin-profile">
+                        <div class="admin-avatar">
+                            <img src="{{ sid.picture.url }}" class="top-profile-img">
+                        </div>
+                        <div>
+                            <p style="font-weight:600;">{{ sid.role }}</p>
+                            <p style="font-size:0.8rem;">{{ sid.firstname }} {{ sid.lastname }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADD CATEGORY CONTENT -->
+            <div class="content-section active">
+                <div class="form-container">
+                    <div class="form-title">
+                        <h2><i class="fas fa-plus-circle" style="color:#667eea;"></i> Add New Category</h2>
+                        <!-- dsfvdf -->
+                        </a>
+                    </div>
+
+                    <form method="POST" action="{% url 'add_category' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-grid">
+
+                            <div class="form-group">
+                                <label><i class="fas fa-tag"></i> Category Name *</label>
+                                <input type="text" name="categories_name" placeholder="e.g. Dairy, Vegetables" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-tag"></i> Category image *</label>
+                                <input type="file" name="category_picture" >
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label><i class="fas fa-file-alt"></i> Description</label>
+                                <textarea rows="3" name="description" placeholder="Category description..."></textarea>
+                            </div>
+
+                        </div>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Save Category
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSubmenu() {
+            let submenu = document.getElementById('productsSubmenu');
+            let icon = document.getElementById('chevronIcon');
+            submenu.classList.toggle('active');
+            icon.style.transform = submenu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+        function updateIconPreview(val) {
+            document.getElementById('iconPreview').innerText = val || '📦';
+        }
+    </script>
+</body>
+</html>

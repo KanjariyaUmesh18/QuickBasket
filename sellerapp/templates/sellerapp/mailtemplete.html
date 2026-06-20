@@ -1,0 +1,307 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OTP Verification</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0d0d0d;
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .email-wrapper {
+      max-width: 520px;
+      width: 100%;
+      background: #111;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid #222;
+      box-shadow: 0 0 0 1px #1a1a1a, 0 40px 80px rgba(0,0,0,0.6);
+    }
+
+    /* ── Header ── */
+    .header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 48px 40px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: -40px;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, rgba(34,211,238,0.2) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      position: relative; z-index: 1;
+    }
+
+    .brand-icon {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, #6366f1, #22d3ee);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+
+    .brand-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .header-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 28px;
+      color: #fff;
+      line-height: 1.2;
+      position: relative; z-index: 1;
+    }
+
+    .header-title span {
+      background: linear-gradient(90deg, #6366f1, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Body ── */
+    .body {
+      padding: 40px 40px 32px;
+    }
+
+    .greeting {
+      font-size: 15px;
+      color: #888;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .greeting strong {
+      color: #ddd;
+      font-weight: 500;
+    }
+
+    /* OTP Box */
+    .otp-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 12px;
+    }
+
+    .otp-box {
+      background: #0d0d0d;
+      border: 1px solid #222;
+      border-radius: 16px;
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .otp-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(99,102,241,0.06) 0%, rgba(34,211,238,0.04) 100%);
+    }
+
+    .otp-code {
+      font-family: 'Syne', sans-serif;
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: 8px;
+      background: linear-gradient(90deg, #6366f1, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative; z-index: 1;
+    }
+
+    .otp-icon {
+      font-size: 28px;
+      position: relative; z-index: 1;
+      opacity: 0.6;
+    }
+
+    /* Timer */
+    .timer-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .timer-dot {
+      width: 8px; height: 8px;
+      background: #22d3ee;
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .timer-text {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .timer-text strong {
+      color: #22d3ee;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #222, transparent);
+      margin-bottom: 28px;
+    }
+
+    /* Warning */
+    .warning {
+      background: rgba(251,191,36,0.05);
+      border: 1px solid rgba(251,191,36,0.15);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 28px;
+    }
+
+    .warning-icon { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+
+    .warning-text {
+      font-size: 13px;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    .warning-text strong { color: #fbbf24; font-weight: 500; }
+
+    /* ── Footer ── */
+    .footer {
+      padding: 24px 40px 32px;
+      border-top: 1px solid #1a1a1a;
+    }
+
+    .footer-text {
+      font-size: 12px;
+      color: #444;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .footer-text a {
+      color: #6366f1;
+      text-decoration: none;
+    }
+
+    .footer-brand {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 11px;
+      color: #333;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: 'Syne', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="brand">
+        <div class="brand-icon">🔐</div>
+        <div class="brand-name">YourApp</div>
+      </div>
+      <div class="header-title">
+        Verify your<br><span>identity</span>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="body">
+      <p class="greeting">
+        Hi <strong>User</strong>,<br><br>
+        We received a request to reset your password. Use the OTP below to proceed. 
+        Do not share this code with anyone.
+      </p>
+
+      <div class="otp-label">Your One-Time Password</div>
+
+      <div class="otp-box">
+        <div class="otp-code">{{ data.otp }}</div>
+        <div class="otp-icon">🛡️</div>
+      </div>
+
+      <div class="timer-row">
+        <div class="timer-dot"></div>
+        <div class="timer-text">This code expires in <strong>10 minutes</strong></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="warning">
+        <div class="warning-icon">⚠️</div>
+        <div class="warning-text">
+          <strong>Didn't request this?</strong> If you didn't initiate this request, 
+          you can safely ignore this email. Your account remains secure.
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-text">
+        This is an automated message. Please do not reply to this email.<br>
+        Need help? <a href="#">Contact Support</a>
+      </div>
+      <div class="footer-brand">YourApp © 2026</div>
+    </div>
+
+  </div>
+</body>
+</html>

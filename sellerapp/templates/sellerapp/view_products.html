@@ -1,0 +1,217 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Products · QuickBasket</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'sellerapp/css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'sellerapp/css/view_products.css' %}">
+</head>
+<body>
+    <div class="container">
+
+        <!-- SIDEBAR — bilkul index.html jaisa -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-store"></i>
+                <h2>QuickBasket</h2>
+                <p>Admin Panel</p>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+
+                <!-- PRODUCTS with Submenu -->
+                <li class="nav-item">
+                    <div class="nav-link active" onclick="toggleSubmenu()">
+                        <i class="fas fa-box"></i> Products
+                        <i class="fas fa-chevron-down" id="chevronIcon" style="margin-left: auto; font-size: 0.8rem; transform: rotate(180deg);"></i>
+                    </div>
+                    <ul class="submenu active" id="productsSubmenu">
+                        <li class="submenu-item">
+                            <a href="{% url 'login' %}" class="submenu-link" style="text-decoration:none;">
+                                <i class="fas fa-plus-circle"></i> Add Product
+                            </a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="{% url 'view_products' %}" class="submenu-link active" style="text-decoration:none;">
+                                <i class="fas fa-eye"></i> View Products
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-tags"></i> Categories
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-shopping-cart"></i> Orders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-users"></i> Users
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-credit-card"></i> Payments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link" style="text-decoration:none;">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+
+            <!-- Top Bar — bilkul index.html jaisa -->
+            <div class="top-bar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="admin-info">
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span>3</span>
+                    </div>
+                    <button class="logout-btn">
+                        <a class="fas fa-sign-out-alt" href="{% url 'logout' %}"></a> Logout
+                    </button>
+                    <div class="admin-profile">
+                        <div class="admin-avatar">
+                            <img src="{{ sid.picture.url }}" class="top-profile-img">
+                        </div>
+                        <div>
+                            <p style="font-weight: 600;">{{ sid.role }}</p>
+                            <p style="font-size: 0.8rem;">{{ sid.firstname }} {{ sid.lastname }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW PRODUCTS CONTENT -->
+            <div class="content-section active">
+                <div class="form-container">
+                    <div class="form-title">
+                        <h2><i class="fas fa-eye" style="color: #667eea;"></i> View Products</h2>
+                    </div>
+
+                    <!-- Search + Filter -->
+                    <div class="search-products">
+                        <input type="text" id="searchInput" placeholder="🔍 Products search karo..." onkeyup="filterProducts()">
+                        <select id="categoryFilter" onchange="filterProducts()">
+                            <option value="all">All Categories</option>
+                            <option value="Dairy">🥛 Dairy</option>
+                            <option value="Vegetables">🥬 Vegetables</option>
+                            <option value="Fruits">🍎 Fruits</option>
+                            <option value="Grocery">🛒 Grocery</option>
+                            <option value="Bakery">🥖 Bakery</option>
+                        </select>
+                    </div>
+
+                    <!-- Products Grid -->
+                    <div class="view-products-grid" id="productsGrid">                        
+
+                        {% for p in products %}
+                        <a href="{% url 'product_details' p.id %}" class="view-product-card"
+                        data-name="{{ p.product_name|lower }}"
+                        data-category="{{ p.product_category }}">
+
+                            <div class="view-product-card-img"
+                                style="background-image: url('{{ p.picture.url }}')">
+                                <span class="view-product-card-badge">{{ p.badge_text }}</span>
+                            </div>
+
+                            <div class="view-product-card-body">
+                                <h4>{{ p.product_name }}</h4>
+
+                                <span class="view-product-card-cat">
+                                    {{ p.product_category }}
+                                </span>
+
+                                <div class="view-product-card-price">
+                                    ₹{{ p.product_price }}
+                                </div>
+
+                                <div class="view-product-card-stock">
+                                    <i class="fas fa-boxes"></i>
+                                    Stock: {{ p.stock_qty }} units
+                                </div>
+                                <div class="view-product-card-stock">
+                                    {{ p.weight_unit }}
+                                </div>
+                            </div>
+                        </a>
+                        {% empty %}
+
+                        <div class="empty-products">
+                            <i class="fas fa-box-open"></i>
+                            <p>No products available</p>
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <!-- JS search ke baad koi na mile -->
+                    <div class="no-result" id="noResult">
+                        <i class="fas fa-search"></i>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Sidebar submenu toggle
+        function toggleSubmenu() {
+            let submenu = document.getElementById('productsSubmenu');
+            let icon = document.getElementById('chevronIcon');
+            submenu.classList.toggle('active');
+            icon.style.transform = submenu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        // Search + Category filter
+        function filterProducts() {
+            let search = document.getElementById('searchInput').value.toLowerCase();
+            let category = document.getElementById('categoryFilter').value;
+            let cards = document.querySelectorAll('.view-product-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                let name = card.dataset.name || '';
+                let cat = card.dataset.category || '';
+                let matchSearch = name.includes(search);
+                let matchCat = category === 'all' || cat === category;
+
+                if (matchSearch && matchCat) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            document.getElementById('noResult').style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
