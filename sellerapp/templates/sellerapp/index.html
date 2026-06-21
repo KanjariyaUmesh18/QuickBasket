@@ -7,6 +7,43 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static  'sellerapp/css/index.css' %}">
+    <style>
+        /* Order detail overlay - opens via plain href (#order-XXX), closes via href="#" */
+        .order-target-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .order-target-overlay:target {
+            display: flex;
+        }
+        .order-target-card {
+            background: #fff;
+            border-radius: 12px;
+            max-width: 750px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 25px;
+        }
+        .order-target-card .qod-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .order-target-card .qod-topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -560,18 +597,11 @@
                 </div>
             </div>
 
-            <!-- ORDERS SECTION -->
+            <!-- ORDERS SECTION (static, no JS — View opens detail via plain href + CSS) -->
             <div id="orders-section" class="content-section">
                 <div class="form-container">
                     <div class="form-title">
                         <h2><i class="fas fa-shopping-cart" style="color: #667eea;"></i> Orders Management</h2>
-                        <select onchange="filterOrders()" style="padding: 10px; border-radius: 8px;">
-                            <option value="all">All Orders</option>
-                            <option value="pending">Pending</option>
-                            <option value="processing">Processing</option>
-                            <option value="delivered">Delivered</option>
-                            <option value="rejected">Rejected</option>
-                        </select>
                     </div>
                     <div class="table-responsive">
                         <table>
@@ -580,138 +610,34 @@
                                     <th>Order ID</th><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="ordersTableBody"></tbody>
+                            <tbody>
+                                <tr>
+                                    <td>#ORD001</td><td>John Doe</td><td>2024-01-15</td><td>3 items</td><td>₹1234</td>
+                                    <td><span class="status-badge status-delivered">Delivered</span></td>
+                                    <td><div class="table-actions"><a href="#order-ORD001" class="table-action-btn view-btn"><i class="fas fa-eye"></i> View</a></div></td>
+                                </tr>
+                                <tr>
+                                    <td>#ORD002</td><td>Jane Smith</td><td>2024-01-16</td><td>5 items</td><td>₹2345</td>
+                                    <td><span class="status-badge status-processing">Processing</span></td>
+                                    <td><div class="table-actions"><a href="#order-ORD002" class="table-action-btn view-btn"><i class="fas fa-eye"></i> View</a></div></td>
+                                </tr>
+                                <tr>
+                                    <td>#ORD003</td><td>Bob Wilson</td><td>2024-01-17</td><td>1 items</td><td>₹58</td>
+                                    <td><span class="status-badge status-pending">Pending</span></td>
+                                    <td><div class="table-actions"><a href="#order-ORD003" class="table-action-btn view-btn"><i class="fas fa-eye"></i> View</a></div></td>
+                                </tr>
+                                <tr>
+                                    <td>#ORD004</td><td>Alice Brown</td><td>2024-01-18</td><td>2 items</td><td>₹120</td>
+                                    <td><span class="status-badge status-delivered">Delivered</span></td>
+                                    <td><div class="table-actions"><a href="#order-ORD004" class="table-action-btn view-btn"><i class="fas fa-eye"></i> View</a></div></td>
+                                </tr>
+                                <tr>
+                                    <td>#ORD005</td><td>Charlie Davis</td><td>2024-01-19</td><td>4 items</td><td>₹399</td>
+                                    <td><span class="status-badge status-processing">Processing</span></td>
+                                    <td><div class="table-actions"><a href="#order-ORD005" class="table-action-btn view-btn"><i class="fas fa-eye"></i> View</a></div></td>
+                                </tr>
+                            </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ===== ORDER DETAIL SECTION ===== -->
-            <div id="orderDetail-section" class="content-section">
-                <div class="qod-page">
-                    <div class="qod-topbar">
-                        <div class="qod-topbar-left">
-                            <h2><i class="fas fa-receipt" style="color: #667eea;"></i> Order <span id="qodOrderId"></span></h2>
-                            <span class="status-badge" id="qodStatusBadge"></span>
-                        </div>
-                        <button class="back-btn" onclick="showSection('orders')">
-                            <i class="fas fa-arrow-left"></i> Back to Orders
-                        </button>
-                    </div>
-
-                    <div class="qod-grid">
-                        <!-- LEFT: order info + items + totals -->
-                        <div class="qod-main">
-                            <div class="qod-card">
-                                <div class="qod-meta-grid">
-                                    <div class="qod-meta-item">
-                                        <label>Order ID</label>
-                                        <span id="qodMetaOrderId"></span>
-                                    </div>
-                                    <div class="qod-meta-item">
-                                        <label>Order Date</label>
-                                        <span id="qodMetaDate"></span>
-                                    </div>
-                                    <div class="qod-meta-item">
-                                        <label>Customer Name</label>
-                                        <span id="qodMetaName"></span>
-                                    </div>
-                                    <div class="qod-meta-item">
-                                        <label>Customer Email</label>
-                                        <span id="qodMetaEmail"></span>
-                                    </div>
-                                    <div class="qod-meta-item">
-                                        <label>Customer Phone</label>
-                                        <span id="qodMetaPhone"></span>
-                                    </div>
-                                </div>
-
-                                <div class="qod-card-title"><i class="fas fa-box-open"></i> Order Items</div>
-                                <div class="table-responsive">
-                                    <table class="qod-items-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Product</th>
-                                                <th class="qod-text-right">Quantity</th>
-                                                <th class="qod-text-right">Price</th>
-                                                <th class="qod-text-right">Subtotal</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="qodItemsBody"></tbody>
-                                    </table>
-                                </div>
-
-                                <div class="qod-totals">
-                                    <div class="qod-totals-row">
-                                        <span>Subtotal</span>
-                                        <span id="qodSubtotal"></span>
-                                    </div>
-                                    <div class="qod-totals-row">
-                                        <span>Shipping Charge</span>
-                                        <span id="qodShipping"></span>
-                                    </div>
-                                    <div class="qod-totals-row qod-discount">
-                                        <span>Discount</span>
-                                        <span id="qodDiscount"></span>
-                                    </div>
-                                    <div class="qod-totals-row qod-grand-total">
-                                        <span>Grand Total</span>
-                                        <span id="qodGrandTotal"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- RIGHT: customer panel + shipping + summary + actions -->
-                        <div class="qod-sidebar">
-                            <div class="qod-card qod-customer-card">
-                                <div class="qod-card-title"><i class="fas fa-user"></i> Customer Information</div>
-                                <img class="qod-avatar" id="qodCustomerAvatar" src="" alt="Customer">
-                                <div class="qod-customer-name" id="qodCustomerName"></div>
-                                <div class="qod-contact-row"><i class="fas fa-envelope"></i> <span id="qodCustomerEmail"></span></div>
-                                <div class="qod-contact-row"><i class="fas fa-phone"></i> <span id="qodCustomerPhone"></span></div>
-                            </div>
-
-                            <div class="qod-card">
-                                <div class="qod-card-title"><i class="fas fa-map-marker-alt"></i> Shipping Address</div>
-                                <div class="qod-address-text" id="qodShippingAddress"></div>
-                            </div>
-
-                            <div class="qod-card">
-                                <div class="qod-card-title"><i class="fas fa-file-invoice-dollar"></i> Order Summary</div>
-                                <div class="qod-summary-row">
-                                    <span>Payment Method</span>
-                                    <span id="qodPaymentMethod"></span>
-                                </div>
-                                <div class="qod-summary-row">
-                                    <span>Payment Status</span>
-                                    <span class="status-badge" id="qodPaymentStatus"></span>
-                                </div>
-                                <div class="qod-summary-row">
-                                    <span>Transaction ID</span>
-                                    <span id="qodTransactionId"></span>
-                                </div>
-                                <div class="qod-summary-row qod-summary-total">
-                                    <span>Total Amount</span>
-                                    <span id="qodSummaryTotal"></span>
-                                </div>
-                            </div>
-
-                            <div class="qod-card">
-                                <div class="qod-card-title"><i class="fas fa-bolt"></i> Actions</div>
-                                <div class="qod-actions">
-                                    <button class="qod-btn qod-btn-accept" id="qodAcceptBtn" onclick="acceptOrder()">
-                                        <i class="fas fa-check-circle"></i> Accept Order
-                                    </button>
-                                    <button class="qod-btn qod-btn-reject" id="qodRejectBtn" onclick="rejectOrder()">
-                                        <i class="fas fa-times-circle"></i> Reject Order
-                                    </button>
-                                    <button class="qod-btn qod-btn-deliver" id="qodDeliverBtn" onclick="markOrderDelivered()">
-                                        <i class="fas fa-truck"></i> Mark as Delivered
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -803,6 +729,256 @@
         </div>
     </div>
 
+    <!-- ===== ORDER DETAIL OVERLAYS (plain href driven, no JS, no Django) ===== -->
+    <!-- Open: <a href="#order-ORD001">View</a>  |  Close: <a href="#">Back</a> -->
+
+    <div class="order-target-overlay" id="order-ORD001">
+        <div class="order-target-card">
+            <div class="qod-topbar">
+                <div class="qod-topbar-left">
+                    <h2>Order #ORD001</h2>
+                    <span class="status-badge status-delivered">Delivered</span>
+                </div>
+                <a href="#" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Orders</a>
+            </div>
+            <div class="qod-card qod-customer-card">
+                <div class="qod-card-title"><i class="fas fa-user"></i> Customer Information</div>
+                <img class="qod-avatar" src="https://i.pravatar.cc/150?img=12" alt="John Doe">
+                <div class="qod-customer-name">John Doe</div>
+                <div class="qod-contact-row"><i class="fas fa-envelope"></i> johndoe@email.com</div>
+                <div class="qod-contact-row"><i class="fas fa-phone"></i> +1 234 567 8901</div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-box-open"></i> Order Items</div>
+                <div class="table-responsive">
+                    <table class="qod-items-table">
+                        <thead><tr><th>Product</th><th class="qod-text-right">Qty</th><th class="qod-text-right">Price</th><th class="qod-text-right">Subtotal</th></tr></thead>
+                        <tbody>
+                            <tr><td>Fresh Cow Milk</td><td class="qod-text-right">2</td><td class="qod-text-right">₹58</td><td class="qod-text-right">₹116</td></tr>
+                            <tr><td>Greek Yogurt</td><td class="qod-text-right">1</td><td class="qod-text-right">₹120</td><td class="qod-text-right">₹120</td></tr>
+                            <tr><td>Farm Tomatoes</td><td class="qod-text-right">5</td><td class="qod-text-right">₹40</td><td class="qod-text-right">₹200</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="qod-totals">
+                    <div class="qod-totals-row"><span>Subtotal</span><span>₹436</span></div>
+                    <div class="qod-totals-row"><span>Shipping Charge</span><span>₹60</span></div>
+                    <div class="qod-totals-row qod-discount"><span>Discount</span><span>- ₹80</span></div>
+                    <div class="qod-totals-row qod-grand-total"><span>Grand Total</span><span>₹416</span></div>
+                </div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-map-marker-alt"></i> Shipping Address</div>
+                <div class="qod-address-text"><strong>John Doe</strong>221B Baker Street, Apt 4<br>New York, NY - 10001<br>United States<br>+1 234 567 8901</div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-bolt"></i> Actions</div>
+                <div class="qod-actions">
+                    <button class="qod-btn qod-btn-accept" disabled><i class="fas fa-check-circle"></i> Accept Order</button>
+                    <button class="qod-btn qod-btn-reject" disabled><i class="fas fa-times-circle"></i> Reject Order</button>
+                    <button class="qod-btn qod-btn-deliver" disabled><i class="fas fa-truck"></i> Mark as Delivered</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="order-target-overlay" id="order-ORD002">
+        <div class="order-target-card">
+            <div class="qod-topbar">
+                <div class="qod-topbar-left">
+                    <h2>Order #ORD002</h2>
+                    <span class="status-badge status-processing">Processing</span>
+                </div>
+                <a href="#" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Orders</a>
+            </div>
+            <div class="qod-card qod-customer-card">
+                <div class="qod-card-title"><i class="fas fa-user"></i> Customer Information</div>
+                <img class="qod-avatar" src="https://i.pravatar.cc/150?img=47" alt="Jane Smith">
+                <div class="qod-customer-name">Jane Smith</div>
+                <div class="qod-contact-row"><i class="fas fa-envelope"></i> janesmith@email.com</div>
+                <div class="qod-contact-row"><i class="fas fa-phone"></i> +1 234 567 8902</div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-box-open"></i> Order Items</div>
+                <div class="table-responsive">
+                    <table class="qod-items-table">
+                        <thead><tr><th>Product</th><th class="qod-text-right">Qty</th><th class="qod-text-right">Price</th><th class="qod-text-right">Subtotal</th></tr></thead>
+                        <tbody>
+                            <tr><td>Fresh Potatoes</td><td class="qod-text-right">4</td><td class="qod-text-right">₹32</td><td class="qod-text-right">₹128</td></tr>
+                            <tr><td>Fresh Spinach</td><td class="qod-text-right">3</td><td class="qod-text-right">₹25</td><td class="qod-text-right">₹75</td></tr>
+                            <tr><td>Greek Yogurt</td><td class="qod-text-right">2</td><td class="qod-text-right">₹120</td><td class="qod-text-right">₹240</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="qod-totals">
+                    <div class="qod-totals-row"><span>Subtotal</span><span>₹443</span></div>
+                    <div class="qod-totals-row"><span>Shipping Charge</span><span>₹80</span></div>
+                    <div class="qod-totals-row qod-discount"><span>Discount</span><span>- ₹150</span></div>
+                    <div class="qod-totals-row qod-grand-total"><span>Grand Total</span><span>₹373</span></div>
+                </div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-map-marker-alt"></i> Shipping Address</div>
+                <div class="qod-address-text"><strong>Jane Smith</strong>48 Maple Avenue<br>Los Angeles, CA - 90012<br>United States<br>+1 234 567 8902</div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-bolt"></i> Actions</div>
+                <div class="qod-actions">
+                    <button class="qod-btn qod-btn-accept" disabled><i class="fas fa-check-circle"></i> Accept Order</button>
+                    <button class="qod-btn qod-btn-reject"><i class="fas fa-times-circle"></i> Reject Order</button>
+                    <button class="qod-btn qod-btn-deliver"><i class="fas fa-truck"></i> Mark as Delivered</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="order-target-overlay" id="order-ORD003">
+        <div class="order-target-card">
+            <div class="qod-topbar">
+                <div class="qod-topbar-left">
+                    <h2>Order #ORD003</h2>
+                    <span class="status-badge status-pending">Pending</span>
+                </div>
+                <a href="#" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Orders</a>
+            </div>
+            <div class="qod-card qod-customer-card">
+                <div class="qod-card-title"><i class="fas fa-user"></i> Customer Information</div>
+                <img class="qod-avatar" src="https://i.pravatar.cc/150?img=33" alt="Bob Wilson">
+                <div class="qod-customer-name">Bob Wilson</div>
+                <div class="qod-contact-row"><i class="fas fa-envelope"></i> bobwilson@email.com</div>
+                <div class="qod-contact-row"><i class="fas fa-phone"></i> +1 234 567 8903</div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-box-open"></i> Order Items</div>
+                <div class="table-responsive">
+                    <table class="qod-items-table">
+                        <thead><tr><th>Product</th><th class="qod-text-right">Qty</th><th class="qod-text-right">Price</th><th class="qod-text-right">Subtotal</th></tr></thead>
+                        <tbody>
+                            <tr><td>Fresh Cow Milk</td><td class="qod-text-right">1</td><td class="qod-text-right">₹58</td><td class="qod-text-right">₹58</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="qod-totals">
+                    <div class="qod-totals-row"><span>Subtotal</span><span>₹58</span></div>
+                    <div class="qod-totals-row"><span>Shipping Charge</span><span>₹0</span></div>
+                    <div class="qod-totals-row qod-discount"><span>Discount</span><span>- ₹0</span></div>
+                    <div class="qod-totals-row qod-grand-total"><span>Grand Total</span><span>₹58</span></div>
+                </div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-map-marker-alt"></i> Shipping Address</div>
+                <div class="qod-address-text"><strong>Bob Wilson</strong>9 Riverside Lane<br>Chicago, IL - 60601<br>United States<br>+1 234 567 8903</div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-bolt"></i> Actions</div>
+                <div class="qod-actions">
+                    <button class="qod-btn qod-btn-accept"><i class="fas fa-check-circle"></i> Accept Order</button>
+                    <button class="qod-btn qod-btn-reject"><i class="fas fa-times-circle"></i> Reject Order</button>
+                    <button class="qod-btn qod-btn-deliver" disabled><i class="fas fa-truck"></i> Mark as Delivered</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="order-target-overlay" id="order-ORD004">
+        <div class="order-target-card">
+            <div class="qod-topbar">
+                <div class="qod-topbar-left">
+                    <h2>Order #ORD004</h2>
+                    <span class="status-badge status-delivered">Delivered</span>
+                </div>
+                <a href="#" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Orders</a>
+            </div>
+            <div class="qod-card qod-customer-card">
+                <div class="qod-card-title"><i class="fas fa-user"></i> Customer Information</div>
+                <img class="qod-avatar" src="https://i.pravatar.cc/150?img=29" alt="Alice Brown">
+                <div class="qod-customer-name">Alice Brown</div>
+                <div class="qod-contact-row"><i class="fas fa-envelope"></i> alicebrown@email.com</div>
+                <div class="qod-contact-row"><i class="fas fa-phone"></i> +1 234 567 8904</div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-box-open"></i> Order Items</div>
+                <div class="table-responsive">
+                    <table class="qod-items-table">
+                        <thead><tr><th>Product</th><th class="qod-text-right">Qty</th><th class="qod-text-right">Price</th><th class="qod-text-right">Subtotal</th></tr></thead>
+                        <tbody>
+                            <tr><td>Farm Tomatoes</td><td class="qod-text-right">2</td><td class="qod-text-right">₹40</td><td class="qod-text-right">₹80</td></tr>
+                            <tr><td>Fresh Spinach</td><td class="qod-text-right">1</td><td class="qod-text-right">₹25</td><td class="qod-text-right">₹25</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="qod-totals">
+                    <div class="qod-totals-row"><span>Subtotal</span><span>₹105</span></div>
+                    <div class="qod-totals-row"><span>Shipping Charge</span><span>₹30</span></div>
+                    <div class="qod-totals-row qod-discount"><span>Discount</span><span>- ₹15</span></div>
+                    <div class="qod-totals-row qod-grand-total"><span>Grand Total</span><span>₹120</span></div>
+                </div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-map-marker-alt"></i> Shipping Address</div>
+                <div class="qod-address-text"><strong>Alice Brown</strong>77 Sunset Boulevard<br>San Diego, CA - 92101<br>United States<br>+1 234 567 8904</div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-bolt"></i> Actions</div>
+                <div class="qod-actions">
+                    <button class="qod-btn qod-btn-accept" disabled><i class="fas fa-check-circle"></i> Accept Order</button>
+                    <button class="qod-btn qod-btn-reject" disabled><i class="fas fa-times-circle"></i> Reject Order</button>
+                    <button class="qod-btn qod-btn-deliver" disabled><i class="fas fa-truck"></i> Mark as Delivered</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="order-target-overlay" id="order-ORD005">
+        <div class="order-target-card">
+            <div class="qod-topbar">
+                <div class="qod-topbar-left">
+                    <h2>Order #ORD005</h2>
+                    <span class="status-badge status-processing">Processing</span>
+                </div>
+                <a href="#" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Orders</a>
+            </div>
+            <div class="qod-card qod-customer-card">
+                <div class="qod-card-title"><i class="fas fa-user"></i> Customer Information</div>
+                <img class="qod-avatar" src="https://i.pravatar.cc/150?img=53" alt="Charlie Davis">
+                <div class="qod-customer-name">Charlie Davis</div>
+                <div class="qod-contact-row"><i class="fas fa-envelope"></i> charliedavis@email.com</div>
+                <div class="qod-contact-row"><i class="fas fa-phone"></i> +1 234 567 8905</div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-box-open"></i> Order Items</div>
+                <div class="table-responsive">
+                    <table class="qod-items-table">
+                        <thead><tr><th>Product</th><th class="qod-text-right">Qty</th><th class="qod-text-right">Price</th><th class="qod-text-right">Subtotal</th></tr></thead>
+                        <tbody>
+                            <tr><td>Fresh Potatoes</td><td class="qod-text-right">3</td><td class="qod-text-right">₹32</td><td class="qod-text-right">₹96</td></tr>
+                            <tr><td>Fresh Cow Milk</td><td class="qod-text-right">4</td><td class="qod-text-right">₹58</td><td class="qod-text-right">₹232</td></tr>
+                            <tr><td>Farm Tomatoes</td><td class="qod-text-right">2</td><td class="qod-text-right">₹40</td><td class="qod-text-right">₹80</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="qod-totals">
+                    <div class="qod-totals-row"><span>Subtotal</span><span>₹408</span></div>
+                    <div class="qod-totals-row"><span>Shipping Charge</span><span>₹50</span></div>
+                    <div class="qod-totals-row qod-discount"><span>Discount</span><span>- ₹35</span></div>
+                    <div class="qod-totals-row qod-grand-total"><span>Grand Total</span><span>₹423</span></div>
+                </div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-map-marker-alt"></i> Shipping Address</div>
+                <div class="qod-address-text"><strong>Charlie Davis</strong>15 Greenwood Street<br>Houston, TX - 77002<br>United States<br>+1 234 567 8905</div>
+            </div>
+            <div class="qod-card">
+                <div class="qod-card-title"><i class="fas fa-bolt"></i> Actions</div>
+                <div class="qod-actions">
+                    <button class="qod-btn qod-btn-accept" disabled><i class="fas fa-check-circle"></i> Accept Order</button>
+                    <button class="qod-btn qod-btn-reject"><i class="fas fa-times-circle"></i> Reject Order</button>
+                    <button class="qod-btn qod-btn-deliver"><i class="fas fa-truck"></i> Mark as Delivered</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- IMAGE LIGHTBOX POPUP -->
     <div class="img-lightbox-overlay" id="imgLightbox" onclick="closeLightbox(event)">
         <div class="img-lightbox-box">
@@ -831,62 +1007,6 @@
             { id: 5, name: 'Bakery', icon: '🥖', count: 34, status: 'Active' }
         ];
 
-        let orders = [
-            { id: 'ORD001', customer: 'John Doe', email: 'johndoe@email.com', phone: '+1 234 567 8901', avatar: 'https://i.pravatar.cc/150?img=12',
-                date: '2024-01-15', items: 3, total: 1234, status: 'Delivered',
-                products: [
-                    { name: 'Fresh Cow Milk', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 2, price: 58 },
-                    { name: 'Greek Yogurt', image: 'https://images.pexels.com/photos/3758844/pexels-photo-3758844.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 1, price: 120 },
-                    { name: 'Farm Tomatoes', image: 'https://images.pexels.com/photos/1327838/pexels-photo-1327838.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 5, price: 40 }
-                ],
-                shipping: 60, discount: 80,
-                shippingAddress: { line1: '221B Baker Street, Apt 4', city: 'New York', state: 'NY', zip: '10001', country: 'United States' },
-                payment: { method: 'UPI', status: 'Paid', transactionId: 'TXN-9988776655' } },
-
-            { id: 'ORD002', customer: 'Jane Smith', email: 'janesmith@email.com', phone: '+1 234 567 8902', avatar: 'https://i.pravatar.cc/150?img=47',
-                date: '2024-01-16', items: 5, total: 2345, status: 'Processing',
-                products: [
-                    { name: 'Fresh Potatoes', image: 'https://images.pexels.com/photos/2286776/pexels-photo-2286776.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 4, price: 32 },
-                    { name: 'Fresh Spinach', image: 'https://images.pexels.com/photos/2574616/pexels-photo-2574616.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 3, price: 25 },
-                    { name: 'Greek Yogurt', image: 'https://images.pexels.com/photos/3758844/pexels-photo-3758844.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 2, price: 120 }
-                ],
-                shipping: 80, discount: 150,
-                shippingAddress: { line1: '48 Maple Avenue', city: 'Los Angeles', state: 'CA', zip: '90012', country: 'United States' },
-                payment: { method: 'Credit Card', status: 'Paid', transactionId: 'TXN-7765443322' } },
-
-            { id: 'ORD003', customer: 'Bob Wilson', email: 'bobwilson@email.com', phone: '+1 234 567 8903', avatar: 'https://i.pravatar.cc/150?img=33',
-                date: '2024-01-17', items: 1, total: 58, status: 'Pending',
-                products: [
-                    { name: 'Fresh Cow Milk', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 1, price: 58 }
-                ],
-                shipping: 0, discount: 0,
-                shippingAddress: { line1: '9 Riverside Lane', city: 'Chicago', state: 'IL', zip: '60601', country: 'United States' },
-                payment: { method: 'Cash on Delivery', status: 'Unpaid', transactionId: '—' } },
-
-            { id: 'ORD004', customer: 'Alice Brown', email: 'alicebrown@email.com', phone: '+1 234 567 8904', avatar: 'https://i.pravatar.cc/150?img=29',
-                date: '2024-01-18', items: 2, total: 120, status: 'Delivered',
-                products: [
-                    { name: 'Farm Tomatoes', image: 'https://images.pexels.com/photos/1327838/pexels-photo-1327838.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 2, price: 40 },
-                    { name: 'Fresh Spinach', image: 'https://images.pexels.com/photos/2574616/pexels-photo-2574616.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 1, price: 25 }
-                ],
-                shipping: 30, discount: 15,
-                shippingAddress: { line1: '77 Sunset Boulevard', city: 'San Diego', state: 'CA', zip: '92101', country: 'United States' },
-                payment: { method: 'UPI', status: 'Paid', transactionId: 'TXN-3321987654' } },
-
-            { id: 'ORD005', customer: 'Charlie Davis', email: 'charliedavis@email.com', phone: '+1 234 567 8905', avatar: 'https://i.pravatar.cc/150?img=53',
-                date: '2024-01-19', items: 4, total: 399, status: 'Processing',
-                products: [
-                    { name: 'Fresh Potatoes', image: 'https://images.pexels.com/photos/2286776/pexels-photo-2286776.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 3, price: 32 },
-                    { name: 'Fresh Cow Milk', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 4, price: 58 },
-                    { name: 'Farm Tomatoes', image: 'https://images.pexels.com/photos/1327838/pexels-photo-1327838.jpeg?auto=compress&cs=tinysrgb&w=200', qty: 2, price: 40 }
-                ],
-                shipping: 50, discount: 35,
-                shippingAddress: { line1: '15 Greenwood Street', city: 'Houston', state: 'TX', zip: '77002', country: 'United States' },
-                payment: { method: 'Debit Card', status: 'Paid', transactionId: 'TXN-1122334455' } }
-        ];
-
-        let currentOrderId = null;
-
         let users = [
             { id: 1, name: 'John Doe', email: 'john@email.com', phone: '9876543210', role: 'User', status: 'Active', joined: '2024-01-01' },
             { id: 2, name: 'Jane Smith', email: 'jane@email.com', phone: '9876543211', role: 'Manager', status: 'Active', joined: '2024-01-02' },
@@ -907,7 +1027,6 @@
 
         window.onload = function() {
             loadCategories();
-            loadOrders();
             loadUsers();
             loadPayments();
             loadViewProducts();
@@ -959,7 +1078,7 @@
                 // Categories menu active
                 document.querySelectorAll('.nav-link')[2].classList.add('active');
             }
-            else if(section === 'orders' || section === 'orderDetail') {
+            else if(section === 'orders') {
                 document.querySelectorAll('.nav-link')[3].classList.add('active');
             }
             else if(section === 'users') {
@@ -1132,122 +1251,6 @@
 
         function editCategory(id) { let cat = categories.find(c => c.id === id); let newName = prompt('Category name edit karo:', cat.name); if(newName) { cat.name = newName; loadCategories(); alert('Category update ho gayi!'); } }
         function deleteCategory(id) { if(confirm('Kya aap yeh category delete karna chahte ho?')) { categories = categories.filter(c => c.id !== id); loadCategories(); updateStats(); alert('Category delete ho gayi!'); } }
-
-        function loadOrders(filteredOrders = orders) {
-            let tbody = document.getElementById('ordersTableBody');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-            filteredOrders.forEach(order => {
-                let sc = statusBadgeClass(order.status);
-                tbody.innerHTML += `<tr><td>#${order.id}</td><td>${order.customer}</td><td>${order.date}</td><td>${order.items} items</td><td>₹${order.total}</td><td><span class="status-badge ${sc}">${order.status}</span></td><td><div class="table-actions"><button class="table-action-btn view-btn" onclick="openOrderDetail('${order.id}')"><i class="fas fa-eye"></i> View</button></div></td></tr>`;
-            });
-        }
-
-        function filterOrders() { let filter = event.target.value; loadOrders(filter === 'all' ? orders : orders.filter(o => o.status.toLowerCase() === filter)); }
-
-        // ===== ORDER DETAIL VIEW =====
-        function statusBadgeClass(status) {
-            let s = status.toLowerCase();
-            if(s === 'delivered') return 'status-delivered';
-            if(s === 'processing') return 'status-processing';
-            if(s === 'rejected') return 'status-rejected';
-            return 'status-pending';
-        }
-
-        function openOrderDetail(id) {
-            let order = orders.find(o => o.id === id);
-            if(!order) { alert('❌ Order nahi mila!'); return; }
-            currentOrderId = id;
-
-            document.getElementById('qodOrderId').innerText = '#' + order.id;
-            document.getElementById('qodMetaOrderId').innerText = '#' + order.id;
-            document.getElementById('qodMetaDate').innerText = order.date;
-            document.getElementById('qodMetaName').innerText = order.customer;
-            document.getElementById('qodMetaEmail').innerText = order.email;
-            document.getElementById('qodMetaPhone').innerText = order.phone;
-
-            let statusBadge = document.getElementById('qodStatusBadge');
-            statusBadge.innerText = order.status;
-            statusBadge.className = 'status-badge ' + statusBadgeClass(order.status);
-
-            // Items table
-            let itemsBody = document.getElementById('qodItemsBody');
-            itemsBody.innerHTML = '';
-            let subtotal = 0;
-            order.products.forEach(p => {
-                let lineTotal = p.qty * p.price;
-                subtotal += lineTotal;
-                itemsBody.innerHTML += `<tr>
-                    <td><div class="qod-product-cell"><img src="${p.image}" alt="${p.name}"><span>${p.name}</span></div></td>
-                    <td class="qod-text-right">${p.qty}</td>
-                    <td class="qod-text-right">₹${p.price}</td>
-                    <td class="qod-text-right qod-subtotal-cell">₹${lineTotal}</td>
-                </tr>`;
-            });
-
-            let grandTotal = subtotal + order.shipping - order.discount;
-            document.getElementById('qodSubtotal').innerText = '₹' + subtotal;
-            document.getElementById('qodShipping').innerText = '₹' + order.shipping;
-            document.getElementById('qodDiscount').innerText = '- ₹' + order.discount;
-            document.getElementById('qodGrandTotal').innerText = '₹' + grandTotal;
-
-            // Customer panel
-            document.getElementById('qodCustomerAvatar').src = order.avatar;
-            document.getElementById('qodCustomerName').innerText = order.customer;
-            document.getElementById('qodCustomerEmail').innerText = order.email;
-            document.getElementById('qodCustomerPhone').innerText = order.phone;
-
-            // Shipping address
-            let addr = order.shippingAddress;
-            document.getElementById('qodShippingAddress').innerHTML = `<strong>${order.customer}</strong>${addr.line1}<br>${addr.city}, ${addr.state} - ${addr.zip}<br>${addr.country}<br>${order.phone}`;
-
-            // Order summary
-            document.getElementById('qodPaymentMethod').innerText = order.payment.method;
-            let payBadge = document.getElementById('qodPaymentStatus');
-            payBadge.innerText = order.payment.status;
-            payBadge.className = 'status-badge ' + (order.payment.status === 'Paid' ? 'status-paid' : 'status-unpaid');
-            document.getElementById('qodTransactionId').innerText = order.payment.transactionId;
-            document.getElementById('qodSummaryTotal').innerText = '₹' + grandTotal;
-
-            // Action buttons state
-            let acceptBtn = document.getElementById('qodAcceptBtn');
-            let rejectBtn = document.getElementById('qodRejectBtn');
-            let deliverBtn = document.getElementById('qodDeliverBtn');
-            let isFinal = order.status === 'Delivered' || order.status === 'Rejected';
-            acceptBtn.disabled = isFinal || order.status === 'Processing' || order.status === 'Delivered';
-            rejectBtn.disabled = isFinal;
-            deliverBtn.disabled = order.status !== 'Processing';
-
-            showSection('orderDetail');
-        }
-
-        function acceptOrder() {
-            let order = orders.find(o => o.id === currentOrderId);
-            if(!order) return;
-            order.status = 'Processing';
-            alert('✅ Order accept ho gaya! Ab Processing mein hai.');
-            openOrderDetail(order.id);
-            loadOrders();
-        }
-
-        function rejectOrder() {
-            let order = orders.find(o => o.id === currentOrderId);
-            if(!order) return;
-            if(!confirm('Kya aap is order ko reject karna chahte ho?')) return;
-            order.status = 'Rejected';
-            alert('🚫 Order reject ho gaya.');
-            openOrderDetail(order.id);
-            loadOrders();
-        }
-
-        function markOrderDelivered() {
-            let order = orders.find(o => o.id === currentOrderId);
-            if(!order) return;
-            order.status = 'Delivered';
-            alert('📦 Order delivered mark ho gaya!');
-            openOrderDetail(order.id);
-            loadOrders();
-        }
 
         function loadUsers(filteredUsers = users) {
             let tbody = document.getElementById('usersTableBody');
