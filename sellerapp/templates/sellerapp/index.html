@@ -1,1121 +1,869 @@
-{% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel · QuickBasket</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static  'sellerapp/css/index.css' %}">
-    <style>
-        /* Order detail overlay - opens via plain href (#order-XXX), closes via href="#" */
-        .order-target-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .order-target-overlay:target {
-            display: flex;
-        }
-        .order-target-card {
-            background: #fff;
-            border-radius: 12px;
-            max-width: 750px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 25px;
-        }
-        .order-target-card .qod-topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .order-target-card .qod-topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- SIDEBAR -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <i class="fas fa-store"></i>
-                <h2>QuickBasket</h2>
-                <p>Admin Panel</p>
+    {% load static %}
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Panel · QuickBasket</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{% static  'sellerapp/css/index.css' %}">
+        <style>
+            /* Order detail overlay - opens via plain href (#order-XXX), closes via href="#" */
+            .order-target-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                overflow-y: auto;
+            }
+            .order-target-overlay:target {
+                display: flex;
+            }
+            .order-target-card {
+                background: #fff;
+                border-radius: 12px;
+                max-width: 750px;
+                width: 100%;
+                max-height: 90vh;
+                overflow-y: auto;
+                padding: 25px;
+            }
+            .order-target-card .qod-topbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            .order-target-card .qod-topbar-left {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- SIDEBAR -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <i class="fas fa-store"></i>
+                    <h2>QuickBasket</h2>
+                    <p>Admin Panel</p>
+                </div>
+
+                <ul class="nav-menu">   
+                    <li class="nav-item">
+                        <div class="nav-link active" onclick="showSection('dashboard')">
+                            <i class="fas fa-home"></i> Dashboard
+                        </div>
+                    </li>
+                    
+                    <!-- PRODUCTS with Submenu -->
+                    <li class="nav-item">
+                        <div class="nav-link" onclick="toggleSubmenu('productsSubmenu', this)">
+                            <i class="fas fa-box"></i> Products
+                            <i class="fas fa-chevron-down" style="margin-left: auto; font-size: 0.8rem;"></i>
+                        </div>
+                        <ul class="submenu" id="productsSubmenu">
+                            <li class="submenu-item">
+                                <a href="#" onclick="showSection('addProduct')" class="submenu-link">
+                                    <i class="fas fa-plus-circle"></i> Add Product
+                                </a>
+                            </li>
+                            <li class="submenu-item">
+                                <a href="{% url 'view_products' %}" class="submenu-link">
+                                    <i class="fas fa-eye"></i> View Products
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- CATEGORIES with Submenu (Updated) -->
+                    <li class="nav-item">
+                        <div class="nav-link" onclick="toggleSubmenu('categoriesSubmenu', this)">
+                            <i class="fas fa-tags"></i> Categories
+                            <i class="fas fa-chevron-down" style="margin-left: auto; font-size: 0.8rem;"></i>
+                        </div>
+                        <ul class="submenu" id="categoriesSubmenu">
+                            <li class="submenu-item">
+                                <div class="submenu-link">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <a href="{% url 'add_category'%}">Add Category</a> 
+                                </div>
+                            </li>
+                            <li class="submenu-item">
+                                <div class="submenu-link">
+                                    <i class="fas fa-eye"></i>
+                                    <a href="{% url 'view_categories' %}">View Categories</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-link" onclick="showSection('orders')">
+                            <i class="fas fa-shopping-cart"></i> Orders
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="nav-link" onclick="showSection('users')">
+                            <i class="fas fa-users"></i> Users
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="nav-link" onclick="showSection('payments')">
+                            <i class="fas fa-credit-card"></i> Payments
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="nav-link" onclick="showSection('settings')">
+                            <i class="fas fa-cog"></i> Settings
+                        </div>
+                    </li>
+                </ul>
             </div>
 
-            <ul class="nav-menu">   
-                <li class="nav-item">
-                    <div class="nav-link active" onclick="showSection('dashboard')">
-                        <i class="fas fa-home"></i> Dashboard
+            <!-- MAIN CONTENT -->
+            <div class="main-content">
+                <!-- Top Bar -->
+                <div class="top-bar">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
                     </div>
-                </li>
-                
-                <!-- PRODUCTS with Submenu -->
-                <li class="nav-item">
-                    <div class="nav-link" onclick="toggleSubmenu('productsSubmenu', this)">
-                        <i class="fas fa-box"></i> Products
-                        <i class="fas fa-chevron-down" style="margin-left: auto; font-size: 0.8rem;"></i>
-                    </div>
-                    <ul class="submenu" id="productsSubmenu">
-                        <li class="submenu-item">
-                            <a href="#" onclick="showSection('addProduct')" class="submenu-link">
-                                <i class="fas fa-plus-circle"></i> Add Product
-                            </a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="{% url 'view_products' %}" class="submenu-link">
-                                <i class="fas fa-eye"></i> View Products
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- CATEGORIES with Submenu (Updated) -->
-                <li class="nav-item">
-                    <div class="nav-link" onclick="toggleSubmenu('categoriesSubmenu', this)">
-                        <i class="fas fa-tags"></i> Categories
-                        <i class="fas fa-chevron-down" style="margin-left: auto; font-size: 0.8rem;"></i>
-                    </div>
-                    <ul class="submenu" id="categoriesSubmenu">
-                        <li class="submenu-item">
-                            <div class="submenu-link">
-                                <i class="fas fa-plus-circle"></i>
-                                <a href="{% url 'add_category'%}">Add Category</a> 
-                            </div>
-                        </li>
-                        <li class="submenu-item">
-                            <div class="submenu-link">
-                                <i class="fas fa-eye"></i>
-                                <a href="{% url 'view_categories' %}">View Categories</a>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item">
-                    <div class="nav-link" onclick="showSection('orders')">
-                        <i class="fas fa-shopping-cart"></i> Orders
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <div class="nav-link" onclick="showSection('users')">
-                        <i class="fas fa-users"></i> Users
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <div class="nav-link" onclick="showSection('payments')">
-                        <i class="fas fa-credit-card"></i> Payments
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <div class="nav-link" onclick="showSection('settings')">
-                        <i class="fas fa-cog"></i> Settings
-                    </div>
-                </li>
-            </ul>
-        </div>
-
-        <!-- MAIN CONTENT -->
-        <div class="main-content">
-            <!-- Top Bar -->
-            <div class="top-bar">
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search...">
-                </div>
-                <div class="admin-info">    
-                    <div class="notification">
-                        <i class="fas fa-bell"></i>
-                        <span>3</span>
-                    </div>
-                    <button class="logout-btn">
-                        <a class="logout-btn-raj" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                    </button>
-                    <div class="admin-profile" onclick="showSection('adminProfile')">
-                        <div class="admin-avatar">
-                            <img src="{{sid.picture.url}}" class="top-profile-img">
-                        </div>
-                        <div>
-                            <p style="font-weight: 600;">{{sid.role}}</p>
-                            <p style="font-size: 0.8rem;">{{sid.firstname}} {{sid.lastname}}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- DASHBOARD SECTION -->
-            <div id="dashboard-section" class="content-section active">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-box"></i></div>
-                        <div class="stat-info">
-                            <h3>{{ totalproducts }}</h3>
-                            <p>Total Products</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-tags"></i></div>
-                        <div class="stat-info">
-                            <h3>{{ totalcategories }}</h3>
-                            <p>Categories</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
-                        <div class="stat-info">
-                            <h3>1,234</h3>
-                            <p>Total Orders</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-users"></i></div>
-                        <div class="stat-info">
-                            <h3>892</h3>
-                            <p>Total Users</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Orders -->
-                <div class="form-container" style="margin-bottom: 30px;">
-                    <div class="form-title"><h3>Recent Orders</h3></div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>#ORD001</td><td>John Doe</td><td>2024-01-15</td><td>₹1,234</td><td><span class="status-badge status-delivered">Delivered</span></td></tr>
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Recent Users -->
-                <div class="form-container">
-                    <div class="form-title"><h3>Recent Users</h3></div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>User ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>1</td><td>John Doe</td><td>john@email.com</td><td><span class="user-role">User</span></td><td><span class="status-badge status-active">Active</span></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ADD PRODUCT SECTION -->
-            <div id="addProduct-section" class="content-section">
-                <div class="form-container">
-                    <div class="form-title">
-                        <h2><i class="fas fa-plus-circle" style="color: #667eea;"></i> Add New Product</h2>
-                    </div>
-                    <form method="POST" action="{% url 'add_product' %}" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label><i class="fas fa-tag"></i> Product Name *</label>
-                                <input type="text" placeholder="e.g. Fresh Cow Milk" name="product_name">
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-layer-group"></i> Category *</label>
-                                <select name="product_category">
-                                    <option value="">Select Category</option>
-                                    <option value="Dairy">🥛 Dairy</option>
-                                    <option value="Vegetables">🥬 Vegetables</option>
-                                    <option value="Fruits">🍎 Fruits</option>
-                                    <option value="Grocery">🛒 Grocery</option>
-                                    <option value="Bakery">🥖 Bakery</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-rupee-sign"></i> Price (₹) *</label>
-                                <input type="number" placeholder="e.g. 58" name="product_price">
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-boxes"></i> Stock Quantity *</label>
-                                <input type="number" placeholder="e.g. 150" name="stock_qty">
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Picture</label>
-                                <input type="file" name="picture">
-                            </div>
-                            <div class="form-group full-width">
-                                <label><i class="fas fa-file-alt"></i> Description</label>
-                                <textarea rows="4" placeholder="Detailed product description..." name="description"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-percent"></i> Discount (%)</label>
-                                <input type="number" placeholder="e.g. 15" value="0" name="discount">
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-star"></i> Badge Text</label>
-                                <input type="text" placeholder="e.g. Bestseller, New" name="badge_text">
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-weight"></i> Weight/Unit</label>
-                                <input type="text" placeholder="e.g. 1L, 500g" name="weight_unit">
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-tag"></i> Brand</label>
-                                <input type="text" placeholder="e.g. Amul, Nestle" name="brand">
-                            </div>
-                        </div>
-                        <button type="submit" class="submit-btn">
-                            <i class="fas fa-save"></i> Save Product
+                    <div class="admin-info">    
+                        <button class="logout-btn">
+                            <a class="logout-btn-raj" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
                         </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- ===== VIEW PRODUCTS SECTION ===== -->
-            <div id="viewProducts-section" class="content-section">
-                <div class="form-container">
-                    <div class="form-title">
-                        <h2><i class="fas fa-eye" style="color: #667eea;"></i> View Products</h2>
-                        <p>Kisi bhi product par click karo details dekhne ke liye</p>
-                    </div>
-                    <div class="search-products">
-                        <input type="text" id="viewSearchInput" placeholder="Products search karo..." onkeyup="filterViewProducts()">
-                        <select id="viewCategoryFilter" onchange="filterViewProducts()">
-                            <option value="all">All Categories</option>
-                            <option value="Dairy">🥛 Dairy</option>
-                            <option value="Vegetables">🥬 Vegetables</option>
-                            <option value="Fruits">🍎 Fruits</option>
-                            <option value="Grocery">🛒 Grocery</option>
-                            <option value="Bakery">🥖 Bakery</option>
-                        </select>
-                    </div>
-                    <div id="viewProductsGrid" class="view-products-grid"></div>
-                </div>
-            </div>
-
-            <!-- ===== PRODUCT DETAIL SECTION ===== -->
-            <div id="productDetail-section" class="content-section">
-                <div class="product-detail-page">
-                    <div class="product-detail-card">
-
-                        <!-- ✅ HEADING + BACK BTN — CARD KE ANDAR -->
-                        <div class="product-detail-header">
-                            <h2><i class="fas fa-box" style="color: #667eea;"></i> Product Details</h2>
-                            <button class="back-btn" onclick="showSection('viewProducts')">
-                                <i class="fas fa-arrow-left"></i> Back to Products
-                            </button>
-                        </div>
-
-                        <div class="product-detail-top">
-                            <div class="product-detail-img-wrap">
-                                <img id="detailProductImg" src="" alt="Product Image">
-                                <span class="product-detail-badge" id="detailProductBadge"></span>
+                        <div class="admin-profile" onclick="showSection('adminProfile')">
+                            <div class="admin-avatar">
+                                <img src="{{sid.picture.url}}" class="top-profile-img">
                             </div>
-                            <div class="product-detail-info">
-                                <h2 class="product-detail-name" id="detailProductName"></h2>
-                                <span class="product-detail-category" id="detailProductCategory"></span>
-
-                                <div class="product-detail-meta">
-                                    <div class="detail-meta-item">
-                                        <label>💰 Price</label>
-                                        <span class="detail-price-big" id="detailProductPrice"></span>
-                                    </div>
-                                    <div class="detail-meta-item">
-                                        <label>📦 Stock</label>
-                                        <span id="detailProductStock"></span>
-                                    </div>
-                                    <div class="detail-meta-item">
-                                        <label>🏷️ Brand</label>
-                                        <span id="detailProductBrand"></span>
-                                    </div>
-                                    <div class="detail-meta-item">
-                                        <label>⚖️ Weight/Unit</label>
-                                        <span id="detailProductWeight"></span>
-                                    </div>
-                                    <div class="detail-meta-item">
-                                        <label>🔖 Discount</label>
-                                        <span id="detailProductDiscount"></span>
-                                    </div>
-                                    <div class="detail-meta-item">
-                                        <label>📝 Short Desc</label>
-                                        <span id="detailProductShortDesc" style="font-size:0.9rem; font-weight:500;"></span>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label style="font-size:0.75rem; color:#718096; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">📄 Description</label>
-                                    <p class="product-detail-desc" id="detailProductDesc"></p>
-                                </div>
-
-                                <div>
-                                    <label style="font-size:0.75rem; color:#718096; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:8px;">✨ Features / Specs</label>
-                                    <div class="product-detail-specs" id="detailProductSpecs"></div>
-                                </div>
+                            <div>
+                                <p style="font-weight: 600;">{{sid.role}}</p>
+                                <p style="font-size: 0.8rem;">{{sid.firstname}} {{sid.lastname}}</p>
                             </div>
                         </div>
-
-                        <!-- Action Buttons -->
-                        <div class="product-detail-actions">
-                            <button class="btn-edit-product" onclick="openEditFromDetail()">
-                                <i class="fas fa-edit"></i> Edit Product
-                            </button>
-                            <button class="btn-delete-product" onclick="deleteProductFromDetail()">
-                                <i class="fas fa-trash-alt"></i> Delete Product
-                            </button>
-                        </div>
-
                     </div>
                 </div>
-            </div>
 
-            <!-- ===== EDIT PRODUCT FORM SECTION ===== -->
-            <div id="editProductForm-section" class="content-section">
-                <div class="form-container">
-                    <div class="form-title">
-                        <h2><i class="fas fa-edit" style="color: #667eea;"></i> Edit Product</h2>
-                        <button class="back-btn" onclick="goBackToDetail()">
-                            <i class="fas fa-arrow-left"></i> Back to Details
-                        </button>
+                <!-- DASHBOARD SECTION -->
+                <div id="dashboard-section" class="content-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-box"></i></div>
+                            <div class="stat-info">
+                                <h3>{{ totalproducts }}</h3>
+                                <p>Total Products</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-tags"></i></div>
+                            <div class="stat-info">
+                                <h3>{{ totalcategories }}</h3>
+                                <p>Categories</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                            <div class="stat-info">
+                                <h3>{{totalorder}}</h3>
+                                <p>Total Orders</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-users"></i></div>
+                            <div class="stat-info">
+                                <h3>{{totalusers}}</h3>
+                                <p>Total Users</p>
+                            </div>
+                        </div>
                     </div>
-                    <form onsubmit="updateProduct(event)">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label><i class="fas fa-tag"></i> Product Name *</label>
-                                <input type="text" id="editProductName" placeholder="e.g. Fresh Cow Milk" required>
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-layer-group"></i> Category *</label>
-                                <select id="editProductCategory" required>
-                                    <option value="">Select Category</option>
-                                    <option value="Dairy">🥛 Dairy</option>
-                                    <option value="Vegetables">🥬 Vegetables</option>
-                                    <option value="Fruits">🍎 Fruits</option>
-                                    <option value="Grocery">🛒 Grocery</option>
-                                    <option value="Bakery">🥖 Bakery</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-rupee-sign"></i> Price (₹) *</label>
-                                <input type="number" id="editProductPrice" placeholder="e.g. 58" required>
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-boxes"></i> Stock Quantity *</label>
-                                <input type="number" id="editProductStock" placeholder="e.g. 150" required>
-                            </div>
-                            <div class="form-group full-width">
-                                <label><i class="fas fa-image"></i> Image URL *</label>
-                                <input type="url" id="editProductImage" placeholder="https://example.com/image.jpg" onchange="updateEditImagePreview(this.value)">
-                                <div class="image-preview" id="editImagePreview">
-                                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem;"></i>
-                                    <p>Image preview will appear here</p>
+
+                    <!-- Recent Orders -->
+                    <div class="form-container" style="margin-bottom: 30px;">
+                        <div class="form-title"><h3>Recent Orders</h3></div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th><th>Customer</th><th>Date</th><th>items</th><th>Amount</th><th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                    <tr>
+                                        <td>#ORDER{{order.id}}</td>
+                                        <td>{{order.customer.firstname}}</td>
+                                        <td>{{order.created_at}}</td>
+                                        <td>{{ order.orderitem_set.count }} items</td>
+                                        <td>{{order.total_amount}}</td>
+                                        <td><span class="status-badge status-delivered">{{order.status}}</span></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Recent Users -->
+                    <div class="form-container">
+                        <div class="form-title"><h3>Recent Users</h3></div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th><th>Email</th><th>Role</th><th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for u in users %}
+                                    <tr>
+                                        <td>{{u.id}}</td>
+                                        <td>{{u.email}}</td>
+                                        <td><span class="user-role">{{u.role}}</span></td>
+                                        <td><span class="status-badge status-active">Active</span></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADD PRODUCT SECTION -->
+                <div id="addProduct-section" class="content-section">
+                    <div class="form-container">
+                        <div class="form-title">
+                            <h2><i class="fas fa-plus-circle" style="color: #667eea;"></i> Add New Product</h2>
+                        </div>
+                        <form method="POST" action="{% url 'add_product' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label><i class="fas fa-tag"></i> Product Name *</label>
+                                    <input type="text" placeholder="e.g. Fresh Cow Milk" name="product_name">
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-layer-group"></i> Category *</label>
+                                    <select name="product_category">
+                                        <option value="">Select Category</option>
+                                        <option value="Dairy">🥛 Dairy</option>
+                                        <option value="Vegetables">🥬 Vegetables</option>
+                                        <option value="Fruits">🍎 Fruits</option>
+                                        <option value="Grocery">🛒 Grocery</option>
+                                        <option value="Bakery">🥖 Bakery</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-rupee-sign"></i> Price (₹) *</label>
+                                    <input type="number" placeholder="e.g. 58" name="product_price">
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-boxes"></i> Stock Quantity *</label>
+                                    <input type="number" placeholder="e.g. 150" name="stock_qty">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Picture</label>
+                                    <input type="file" name="picture">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label><i class="fas fa-file-alt"></i> Description</label>
+                                    <textarea rows="4" placeholder="Detailed product description..." name="description"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-percent"></i> Discount (%)</label>
+                                    <input type="number" placeholder="e.g. 15" value="0" name="discount">
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-star"></i> Badge Text</label>
+                                    <input type="text" placeholder="e.g. Bestseller, New" name="badge_text">
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-weight"></i> Weight/Unit</label>
+                                    <input type="text" placeholder="e.g. 1L, 500g" name="weight_unit">
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-tag"></i> Brand</label>
+                                    <input type="text" placeholder="e.g. Amul, Nestle" name="brand">
                                 </div>
                             </div>
-                            <div class="form-group full-width">
-                                <label><i class="fas fa-align-left"></i> Short Description</label>
-                                <textarea id="editProductShortDesc" rows="2" placeholder="e.g. 1L • Toned • Protein"></textarea>
-                            </div>
-                            <div class="form-group full-width">
-                                <label><i class="fas fa-file-alt"></i> Full Description</label>
-                                <textarea id="editProductDescription" rows="4" placeholder="Detailed product description..."></textarea>
-                            </div>
-                            <div class="form-group full-width">
-                                <label><i class="fas fa-clipboard-list"></i> Key Features / Specifications</label>
-                                <div class="specs-grid" id="editSpecsContainer"></div>
-                                <button type="button" onclick="addEditSpecField()" style="margin-top:10px; background:#48bb78; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">
-                                    <i class="fas fa-plus"></i> Add More Feature
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-save"></i> Save Product
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ===== VIEW PRODUCTS SECTION ===== -->
+                <div id="viewProducts-section" class="content-section">
+                    <div class="form-container">
+                        <div class="form-title">
+                            <h2><i class="fas fa-eye" style="color: #667eea;"></i> View Products</h2>
+                            <p>Kisi bhi product par click karo details dekhne ke liye</p>
+                        </div>
+                        <div class="search-products">
+                            <input type="text" id="viewSearchInput" placeholder="Products search karo..." onkeyup="filterViewProducts()">
+                            <select id="viewCategoryFilter" onchange="filterViewProducts()">
+                                <option value="all">All Categories</option>
+                                <option value="Dairy">🥛 Dairy</option>
+                                <option value="Vegetables">🥬 Vegetables</option>
+                                <option value="Fruits">🍎 Fruits</option>
+                                <option value="Grocery">🛒 Grocery</option>
+                                <option value="Bakery">🥖 Bakery</option>
+                            </select>
+                        </div>
+                        <div id="viewProductsGrid" class="view-products-grid"></div>
+                    </div>
+                </div>
+
+                <!-- ===== PRODUCT DETAIL SECTION ===== -->
+                <div id="productDetail-section" class="content-section">
+                    <div class="product-detail-page">
+                        <div class="product-detail-card">
+
+                            <!-- ✅ HEADING + BACK BTN — CARD KE ANDAR -->
+                            <div class="product-detail-header">
+                                <h2><i class="fas fa-box" style="color: #667eea;"></i> Product Details</h2>
+                                <button class="back-btn" onclick="showSection('viewProducts')">
+                                    <i class="fas fa-arrow-left"></i> Back to Products
                                 </button>
                             </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-percent"></i> Discount (%)</label>
-                                <input type="number" id="editProductDiscount" placeholder="e.g. 15" value="0">
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-star"></i> Badge Text</label>
-                                <input type="text" id="editProductBadge" placeholder="e.g. Bestseller, New">
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-weight"></i> Weight/Unit</label>
-                                <input type="text" id="editProductWeight" placeholder="e.g. 1L, 500g">
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-tag"></i> Brand</label>
-                                <input type="text" id="editProductBrand" placeholder="e.g. Amul, Nestle">
-                            </div>
-                        </div>
-                        <input type="hidden" id="editProductId">
-                        <button type="submit" class="submit-btn">
-                            <i class="fas fa-save"></i> Update Product
-                        </button>
-                    </form>
-                </div>
-            </div>
 
-            <!-- ADMIN PROFILE SECTION -->
-            <div id="adminProfile-section" class="content-section">
-                <div class="profile-page">
-                    <div class="profile-header">
-                        <h2><i class="fas fa-user-circle" style="color: #667eea;"></i> Admin Profile</h2>
-                        <button class="back-btn" onclick="showSection('dashboard')">
-                            <i class="fas fa-arrow-left"></i> Back to Dashboard
-                        </button>
-                    </div>
-                    <div class="profile-content">
-                        <div class="profile-avatar-large">
-                            <img src="{{sid.picture.url}}" height="100px" width="90px">
-                        </div>
-                        <h2 style="margin-bottom: 5px;">{{sid.firstname}} {{sid.lastname}}</h2>
-                        <p style="color: #667eea; margin-bottom: 20px;">Seller</p>
-                        <div class="profile-details-grid">
-                            <p><strong>Full Name:</strong>{{sid.firstname}} {{sid.lastname}}</p>
-                            <p><strong>Email:</strong>{{uid.email}}</p>
-                            <p><strong>Phone:</strong>{{sid.contactno}}</p>
-                            <p><strong>Status:</strong> <span class="status-badge status-active">Active</span></p>
-                            <p><strong>Joined:</strong> {{uid.created_at}}</p>
-                            <p><strong>Last Login:</strong> Today 10:30 AM</p>
-                        </div>
-                        <button class="submit-btn" style="margin-top: 30px; max-width: 300px;" onclick="showSection('editProfile')">
-                            <i class="fas fa-edit"></i> Edit Profile
-                        </button>
-                    </div>
-                </div>
-            </div>
+                            <div class="product-detail-top">
+                                <div class="product-detail-img-wrap">
+                                    <img id="detailProductImg" src="" alt="Product Image">
+                                    <span class="product-detail-badge" id="detailProductBadge"></span>
+                                </div>
+                                <div class="product-detail-info">
+                                    <h2 class="product-detail-name" id="detailProductName"></h2>
+                                    <span class="product-detail-category" id="detailProductCategory"></span>
 
-            <!-- EDIT PROFILE SECTION -->
-            <div id="editProfile-section" class="content-section">
-                <div class="edit-profile-page">
-                    <div class="edit-profile-header">
-                        <h2><i class="fas fa-user-edit" style="color: #667eea;"></i> Edit Profile</h2>
-                        <button class="back-btn" onclick="showSection('adminProfile')">
-                            <i class="fas fa-arrow-left"></i> Back to Profile
-                        </button>
-                    </div>
-                    <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>First Name</label>
-                                <input type="text" value="{{sid.firstname}}" placeholder="Enter First name" name="firstname">
-                            </div>
-                            <div class="form-group">
-                                <label>Last Name</label>
-                                <input type="text" value="{{sid.lastname}}" placeholder="Enter Last name" name="lastname">
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" value="{{uid.email}}" placeholder="Enter email" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label>Phone</label>
-                                <input type="tel" value="{{sid.contactno}}" placeholder="Enter phone" name="contactno">
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Seller Store Name</label>
-                                <input type="text" value="{{sid.seller_stock_name}}" placeholder="Enter Store Name" name="seller_stock_name">
-                            </div>
-                            <div class="form-group">
-                                <label>Picture</label>
-                                <input type="file" name="picture">
-                            </div>
-                        </div>
-                        <input type="submit" class="submit-btn" value="Update Profile">
-                    </form>
-                </div>
-            </div>
+                                    <div class="product-detail-meta">
+                                        <div class="detail-meta-item">
+                                            <label>💰 Price</label>
+                                            <span class="detail-price-big" id="detailProductPrice"></span>
+                                        </div>
+                                        <div class="detail-meta-item">
+                                            <label>📦 Stock</label>
+                                            <span id="detailProductStock"></span>
+                                        </div>
+                                        <div class="detail-meta-item">
+                                            <label>🏷️ Brand</label>
+                                            <span id="detailProductBrand"></span>
+                                        </div>
+                                        <div class="detail-meta-item">
+                                            <label>⚖️ Weight/Unit</label>
+                                            <span id="detailProductWeight"></span>
+                                        </div>
+                                        <div class="detail-meta-item">
+                                            <label>🔖 Discount</label>
+                                            <span id="detailProductDiscount"></span>
+                                        </div>
+                                        <div class="detail-meta-item">
+                                            <label>📝 Short Desc</label>
+                                            <span id="detailProductShortDesc" style="font-size:0.9rem; font-weight:500;"></span>
+                                        </div>
+                                    </div>
 
-            <!-- CATEGORIES SECTION -->
-            <div id="categories-section" class="content-section">
-                <div class="form-container">
-                    <div class="form-title">
-                        <h2><i class="fas fa-tags" style="color: #667eea;"></i> Categories Management</h2>
-                        <button class="submit-btn" style="width: auto; padding: 10px 20px;" onclick="showSection('addCategory')">Add Category</button>
-                    </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th><th>Category Name</th><th>Products Count</th><th>Status</th><th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="categoriesTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+                                    <div>
+                                        <label style="font-size:0.75rem; color:#718096; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">📄 Description</label>
+                                        <p class="product-detail-desc" id="detailProductDesc"></p>
+                                    </div>
 
-            <!-- ADD CATEGORY SECTION -->
-            <div id="addCategory-section" class="content-section">
-                <div class="form-container">
-                    <div class="form-title">
-                        <h2><i class="fas fa-plus-circle" style="color: #667eea;"></i> Add New Category</h2>
-                        <button class="back-btn" onclick="showSection('categories')">
-                            <i class="fas fa-arrow-left"></i> Back to Categories
-                        </button>
-                    </div>
-                    <form onsubmit="saveCategory(event)">
-                        <div class="form-grid">
-                            <div class="form-group full-width">
-                                <label>Category Name *</label>
-                                <input type="text" id="categoryName" placeholder="e.g. Dairy, Vegetables" required>
+                                    <div>
+                                        <label style="font-size:0.75rem; color:#718096; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:8px;">✨ Features / Specs</label>
+                                        <div class="product-detail-specs" id="detailProductSpecs"></div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label>Icon</label>
-                                <input type="text" id="categoryIcon" placeholder="e.g. 🥛, 🥬" value="📦">
-                            </div>
-                            <div class="form-group">
-                                <label>Status</label>
-                                <select id="categoryStatus">
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                </select>
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Description</label>
-                                <textarea id="categoryDesc" rows="3" placeholder="Category description..."></textarea>
-                            </div>
-                        </div>
-                        <button type="submit" class="submit-btn">
-                            <i class="fas fa-save"></i> Save Category
-                        </button>
-                    </form>
-                </div>
-            </div>
 
-            <!-- ORDERS SECTION (static, no JS — View opens detail via plain href + CSS) -->
-            <div id="orders-section" class="content-section">
-                <div class="form-container">
-                    <div class="form-title">
-                        <h2><i class="fas fa-shopping-cart" style="color: #667eea;"></i> Orders Management</h2>
-                    </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>#ORD001</td><td>John Doe</td><td>2024-01-15</td><td>3 items</td><td>₹1234</td>
-                                    <td><span class="status-badge status-delivered">Delivered</span></td>
-                                    <td><div class="table-actions"><a href="#order-ORD001" class="table-action-btn view-btn"><i class="fas fa-eye"></i> View</a></div></td>
-                                </tr>
-                                <tr>
-                                    <td>#ORD002</td><td>Jane Smith</td><td>2024-01-16</td><td>5 items</td><td>₹2345</td>
-                                    <td><span class="status-badge status-processing">Processing</span></td>
-                                    <td><div class="table-actions"><a href="#order-ORD002" class="table-action-btn view-btn"><i class="fas fa-eye"></i> View</a></div></td>
-                                </tr>
-                                <tr>
-                                    <td>#ORD003</td><td>Bob Wilson</td><td>2024-01-17</td><td>1 items</td><td>₹58</td>
-                                    <td><span class="status-badge status-pending">Pending</span></td>
-                                    <td><div class="table-actions"><a href="#order-ORD003" class="table-action-btn view-btn"><i class="fas fa-eye"></i> View</a></div></td>
-                                </tr>
-                                <tr>
-                                    <td>#ORD004</td><td>Alice Brown</td><td>2024-01-18</td><td>2 items</td><td>₹120</td>
-                                    <td><span class="status-badge status-delivered">Delivered</span></td>
-                                    <td><div class="table-actions"><a href="#order-ORD004" class="table-action-btn view-btn"><i class="fas fa-eye"></i> View</a></div></td>
-                                </tr>
-                                <tr>
-                                    <td>#ORD005</td><td>Charlie Davis</td><td>2024-01-19</td><td>4 items</td><td>₹399</td>
-                                    <td><span class="status-badge status-processing">Processing</span></td>
-                                    <td><div class="table-actions"><a href="#order-ORD005" class="table-action-btn view-btn"><i class="fas fa-eye"></i> View</a></div></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+                            <!-- Action Buttons -->
+                            <div class="product-detail-actions">
+                                <button class="btn-edit-product" onclick="openEditFromDetail()">
+                                    <i class="fas fa-edit"></i> Edit Product
+                                </button>
+                                <button class="btn-delete-product" onclick="deleteProductFromDetail()">
+                                    <i class="fas fa-trash-alt"></i> Delete Product
+                                </button>
+                            </div>
 
-            <!-- USERS SECTION -->
-            <div id="users-section" class="content-section">
-                <div class="form-container">
-                    <div class="form-title">
-                        <h2><i class="fas fa-users" style="color: #667eea;"></i> Users Management</h2>
-                        <input type="text" placeholder="Search users..." style="padding: 10px; border-radius: 8px; border: 2px solid #e2e8f0;" onkeyup="searchUsers(this.value)">
-                    </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>User ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PAYMENTS SECTION -->
-            <div id="payments-section" class="content-section">
-                <div class="form-container">
-                    <div class="form-title">
-                        <h2><i class="fas fa-credit-card" style="color: #667eea;"></i> Payments Management</h2>
-                    </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Payment ID</th><th>Order ID</th><th>Customer</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="paymentsTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SETTINGS SECTION -->
-            <div id="settings-section" class="content-section">
-                <div class="form-container">
-                    <div class="form-title">
-                        <h2><i class="fas fa-cog" style="color: #667eea;"></i> Settings</h2>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                        <div>
-                            <h3>General Settings</h3>
-                            <div class="form-group">
-                                <label>Store Name</label>
-                                <input type="text" value="QuickBasket" placeholder="Store name">
-                            </div>
-                            <div class="form-group">
-                                <label>Store Email</label>
-                                <input type="email" value="admin@quickbasket.com" placeholder="Store email">
-                            </div>
-                            <div class="form-group">
-                                <label>Store Phone</label>
-                                <input type="text" value="+91 98765 43210" placeholder="Store phone">
-                            </div>
-                            <div class="form-group">
-                                <label>Delivery Time</label>
-                                <input type="text" value="10-15 minutes" placeholder="Delivery time">
-                            </div>
-                        </div>
-                        <div>
-                            <h3>Payment Settings</h3>
-                            <div class="form-group">
-                                <label>UPI ID</label>
-                                <input type="text" value="quickbasket@okhdfcbank" placeholder="UPI ID">
-                            </div>
-                            <div class="form-group">
-                                <label>Bank Account</label>
-                                <input type="text" value="1234567890" placeholder="Account number">
-                            </div>
-                            <div class="form-group">
-                                <label>IFSC Code</label>
-                                <input type="text" value="HDFC0001234" placeholder="IFSC code">
-                            </div>
                         </div>
                     </div>
-                    <button class="submit-btn" style="margin-top: 20px;">Save Settings</button>
+                </div>
+
+                <!-- ===== EDIT PRODUCT FORM SECTION ===== -->
+                <div id="editProductForm-section" class="content-section">
+                    <div class="form-container">
+                        <div class="form-title">
+                            <h2><i class="fas fa-edit" style="color: #667eea;"></i> Edit Product</h2>
+                            <button class="back-btn" onclick="goBackToDetail()">
+                                <i class="fas fa-arrow-left"></i> Back to Details
+                            </button>
+                        </div>
+                        <form onsubmit="updateProduct(event)">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label><i class="fas fa-tag"></i> Product Name *</label>
+                                    <input type="text" id="editProductName" placeholder="e.g. Fresh Cow Milk" required>
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-layer-group"></i> Category *</label>
+                                    <select id="editProductCategory" required>
+                                        <option value="">Select Category</option>
+                                        <option value="Dairy">🥛 Dairy</option>
+                                        <option value="Vegetables">🥬 Vegetables</option>
+                                        <option value="Fruits">🍎 Fruits</option>
+                                        <option value="Grocery">🛒 Grocery</option>
+                                        <option value="Bakery">🥖 Bakery</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-rupee-sign"></i> Price (₹) *</label>
+                                    <input type="number" id="editProductPrice" placeholder="e.g. 58" required>
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-boxes"></i> Stock Quantity *</label>
+                                    <input type="number" id="editProductStock" placeholder="e.g. 150" required>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label><i class="fas fa-image"></i> Image URL *</label>
+                                    <input type="url" id="editProductImage" placeholder="https://example.com/image.jpg" onchange="updateEditImagePreview(this.value)">
+                                    <div class="image-preview" id="editImagePreview">
+                                        <i class="fas fa-cloud-upload-alt" style="font-size: 2rem;"></i>
+                                        <p>Image preview will appear here</p>
+                                    </div>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label><i class="fas fa-align-left"></i> Short Description</label>
+                                    <textarea id="editProductShortDesc" rows="2" placeholder="e.g. 1L • Toned • Protein"></textarea>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label><i class="fas fa-file-alt"></i> Full Description</label>
+                                    <textarea id="editProductDescription" rows="4" placeholder="Detailed product description..."></textarea>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label><i class="fas fa-clipboard-list"></i> Key Features / Specifications</label>
+                                    <div class="specs-grid" id="editSpecsContainer"></div>
+                                    <button type="button" onclick="addEditSpecField()" style="margin-top:10px; background:#48bb78; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">
+                                        <i class="fas fa-plus"></i> Add More Feature
+                                    </button>
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-percent"></i> Discount (%)</label>
+                                    <input type="number" id="editProductDiscount" placeholder="e.g. 15" value="0">
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-star"></i> Badge Text</label>
+                                    <input type="text" id="editProductBadge" placeholder="e.g. Bestseller, New">
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-weight"></i> Weight/Unit</label>
+                                    <input type="text" id="editProductWeight" placeholder="e.g. 1L, 500g">
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-tag"></i> Brand</label>
+                                    <input type="text" id="editProductBrand" placeholder="e.g. Amul, Nestle">
+                                </div>
+                            </div>
+                            <input type="hidden" id="editProductId">
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-save"></i> Update Product
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ADMIN PROFILE SECTION -->
+                <div id="adminProfile-section" class="content-section">
+                    <div class="profile-page">
+                        <div class="profile-header">
+                            <h2><i class="fas fa-user-circle" style="color: #667eea;"></i> Admin Profile</h2>
+                            <button class="back-btn" onclick="showSection('dashboard')">
+                                <i class="fas fa-arrow-left"></i> Back to Dashboard
+                            </button>
+                        </div>
+                        <div class="profile-content">
+                            <div class="profile-avatar-large">
+                                <img src="{{sid.picture.url}}" height="100px" width="90px">
+                            </div>
+                            <h2 style="margin-bottom: 5px;">{{sid.firstname}} {{sid.lastname}}</h2>
+                            <p style="color: #667eea; margin-bottom: 20px;">Seller</p>
+                            <div class="profile-details-grid">
+                                <p><strong>Full Name:</strong>{{sid.firstname}} {{sid.lastname}}</p>
+                                <p><strong>Email:</strong>{{uid.email}}</p>
+                                <p><strong>Phone:</strong>{{sid.contactno}}</p>
+                                <p><strong>Status:</strong> <span class="status-badge status-active">Active</span></p>
+                                <p><strong>Joined:</strong> {{uid.created_at}}</p>
+                                <p><strong>Last Login:</strong> Today 10:30 AM</p>
+                            </div>
+                            <button class="submit-btn" style="margin-top: 30px; max-width: 300px;" onclick="showSection('editProfile')">
+                                <i class="fas fa-edit"></i> Edit Profile
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EDIT PROFILE SECTION -->
+                <div id="editProfile-section" class="content-section">
+                    <div class="edit-profile-page">
+                        <div class="edit-profile-header">
+                            <h2><i class="fas fa-user-edit" style="color: #667eea;"></i> Edit Profile</h2>
+                            <button class="back-btn" onclick="showSection('adminProfile')">
+                                <i class="fas fa-arrow-left"></i> Back to Profile
+                            </button>
+                        </div>
+                        <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                    <input type="text" value="{{sid.firstname}}" placeholder="Enter First name" name="firstname">
+                                </div>
+                                <div class="form-group">
+                                    <label>Last Name</label>
+                                    <input type="text" value="{{sid.lastname}}" placeholder="Enter Last name" name="lastname">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" value="{{uid.email}}" placeholder="Enter email" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone</label>
+                                    <input type="tel" value="{{sid.contactno}}" placeholder="Enter phone" name="contactno">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Seller Store Name</label>
+                                    <input type="text" value="{{sid.seller_stock_name}}" placeholder="Enter Store Name" name="seller_stock_name">
+                                </div>
+                                <div class="form-group">
+                                    <label>Picture</label>
+                                    <input type="file" name="picture">
+                                </div>
+                            </div>
+                            <input type="submit" class="submit-btn" value="Update Profile">
+                        </form>
+                    </div>
+                </div>
+
+                <!-- CATEGORIES SECTION -->
+                <div id="categories-section" class="content-section">
+                    <div class="form-container">
+                        <div class="form-title">
+                            <h2><i class="fas fa-tags" style="color: #667eea;"></i> Categories Management</h2>
+                            <button class="submit-btn" style="width: auto; padding: 10px 20px;" onclick="showSection('addCategory')">Add Category</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th><th>Category Name</th><th>Products Count</th><th>Status</th><th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="categoriesTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADD CATEGORY SECTION -->
+                <div id="addCategory-section" class="content-section">
+                    <div class="form-container">
+                        <div class="form-title">
+                            <h2><i class="fas fa-plus-circle" style="color: #667eea;"></i> Add New Category</h2>
+                            <button class="back-btn" onclick="showSection('categories')">
+                                <i class="fas fa-arrow-left"></i> Back to Categories
+                            </button>
+                        </div>
+                        <form onsubmit="saveCategory(event)">
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label>Category Name *</label>
+                                    <input type="text" id="categoryName" placeholder="e.g. Dairy, Vegetables" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Icon</label>
+                                    <input type="text" id="categoryIcon" placeholder="e.g. 🥛, 🥬" value="📦">
+                                </div>
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <select id="categoryStatus">
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Description</label>
+                                    <textarea id="categoryDesc" rows="3" placeholder="Category description..."></textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-save"></i> Save Category
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ORDERS SECTION (static, no JS — View opens detail via plain href + CSS) -->
+                <div id="orders-section" class="content-section">
+                    <div class="form-container">
+                        <div class="form-title">
+                            <h2><i class="fas fa-shopping-cart" style="color: #667eea;"></i> Orders Management</h2>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                    <tr>
+                                        <td>#ORDER{{order.id}}</td>
+                                        <td>{{order.customer.firstname}}</td>
+                                        <td>{{order.created_at}}</td>
+                                        <td>{{ order.orderitem_set.count }} items</td>
+                                        <td>{{order.total_amount}}</td>
+                                        <td><span class="status-badge status-delivered">{{order.status}}</span></td>
+                                        <td>
+                                            <div class="table-actions">
+                                            <a href="{% url 'order_details' order.id %}" class="table-action-btn view-btn" style="text-decoration: none;">
+                                                <i class="fas fa-eye"></i> View</a></div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- USERS SECTION -->
+                <div id="users-section" class="content-section">
+                    <div class="form-container">
+                        <div class="form-title">
+                            <h2><i class="fas fa-users" style="color: #667eea;"></i> Users Management</h2>
+                            <input type="text" placeholder="Search users..." style="padding: 10px; border-radius: 8px; border: 2px solid #e2e8f0;" onkeyup="searchUsers(this.value)">
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th>Joined</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                {% for u in userdata %}
+                                <tr>
+                                    <th>{{u.id}}</th>
+                                    <th>{{u.name}}</th>
+                                    <th>{{u.email}}</th>
+                                    <th>{{u.phone}}</th>
+                                    <th>{{u.role}}</th>
+                                    <th>Active</th>
+                                    <th>{{u.joined}}</th>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAYMENTS SECTION -->
+                <div id="payments-section" class="content-section">
+                    <div class="form-container">
+                        <div class="form-title">
+                            <h2><i class="fas fa-credit-card" style="color: #667eea;"></i> Payments Management</h2>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Payment ID</th><th>Order ID</th><th>Customer</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SETTINGS SECTION -->
+                <div id="settings-section" class="content-section">
+                    <div class="form-container">
+                        <div class="form-title">
+                            <h2><i class="fas fa-cog" style="color: #667eea;"></i> Settings</h2>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                            <div>
+                                <h3>General Settings</h3>
+                                <div class="form-group">
+                                    <label>Store Name</label>
+                                    <input type="text" value="QuickBasket" placeholder="Store name">
+                                </div>
+                                <div class="form-group">
+                                    <label>Store Email</label>
+                                    <input type="email" value="admin@quickbasket.com" placeholder="Store email">
+                                </div>
+                                <div class="form-group">
+                                    <label>Store Phone</label>
+                                    <input type="text" value="+91 98765 43210" placeholder="Store phone">
+                                </div>
+                                <div class="form-group">
+                                    <label>Delivery Time</label>
+                                    <input type="text" value="10-15 minutes" placeholder="Delivery time">
+                                </div>
+                            </div>
+                            <div>
+                                <h3>Payment Settings</h3>
+                                <div class="form-group">
+                                    <label>UPI ID</label>
+                                    <input type="text" value="quickbasket@okhdfcbank" placeholder="UPI ID">
+                                </div>
+                                <div class="form-group">
+                                    <label>Bank Account</label>
+                                    <input type="text" value="1234567890" placeholder="Account number">
+                                </div>
+                                <div class="form-group">
+                                    <label>IFSC Code</label>
+                                    <input type="text" value="HDFC0001234" placeholder="IFSC code">
+                                </div>
+                            </div>
+                        </div>
+                        <button class="submit-btn" style="margin-top: 20px;">Save Settings</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- ===== ORDER DETAIL OVERLAYS (plain href driven, no JS, no Django) ===== -->
-    <!-- Open: <a href="#order-ORD001">View</a>  |  Close: <a href="#">Back</a> -->
-
-    <div class="order-target-overlay" id="order-ORD001">
-        <div class="order-target-card">
-            <div class="qod-topbar">
-                <div class="qod-topbar-left">
-                    <h2>Order #ORD001</h2>
-                    <span class="status-badge status-delivered">Delivered</span>
-                </div>
-                <a href="#" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Orders</a>
-            </div>
-            <div class="qod-card qod-customer-card">
-                <div class="qod-card-title"><i class="fas fa-user"></i> Customer Information</div>
-                <img class="qod-avatar" src="https://i.pravatar.cc/150?img=12" alt="John Doe">
-                <div class="qod-customer-name">John Doe</div>
-                <div class="qod-contact-row"><i class="fas fa-envelope"></i> johndoe@email.com</div>
-                <div class="qod-contact-row"><i class="fas fa-phone"></i> +1 234 567 8901</div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-box-open"></i> Order Items</div>
-                <div class="table-responsive">
-                    <table class="qod-items-table">
-                        <thead><tr><th>Product</th><th class="qod-text-right">Qty</th><th class="qod-text-right">Price</th><th class="qod-text-right">Subtotal</th></tr></thead>
-                        <tbody>
-                            <tr><td>Fresh Cow Milk</td><td class="qod-text-right">2</td><td class="qod-text-right">₹58</td><td class="qod-text-right">₹116</td></tr>
-                            <tr><td>Greek Yogurt</td><td class="qod-text-right">1</td><td class="qod-text-right">₹120</td><td class="qod-text-right">₹120</td></tr>
-                            <tr><td>Farm Tomatoes</td><td class="qod-text-right">5</td><td class="qod-text-right">₹40</td><td class="qod-text-right">₹200</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="qod-totals">
-                    <div class="qod-totals-row"><span>Subtotal</span><span>₹436</span></div>
-                    <div class="qod-totals-row"><span>Shipping Charge</span><span>₹60</span></div>
-                    <div class="qod-totals-row qod-discount"><span>Discount</span><span>- ₹80</span></div>
-                    <div class="qod-totals-row qod-grand-total"><span>Grand Total</span><span>₹416</span></div>
-                </div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-map-marker-alt"></i> Shipping Address</div>
-                <div class="qod-address-text"><strong>John Doe</strong>221B Baker Street, Apt 4<br>New York, NY - 10001<br>United States<br>+1 234 567 8901</div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-bolt"></i> Actions</div>
-                <div class="qod-actions">
-                    <button class="qod-btn qod-btn-accept" disabled><i class="fas fa-check-circle"></i> Accept Order</button>
-                    <button class="qod-btn qod-btn-reject" disabled><i class="fas fa-times-circle"></i> Reject Order</button>
-                    <button class="qod-btn qod-btn-deliver" disabled><i class="fas fa-truck"></i> Mark as Delivered</button>
-                </div>
+        <div class="img-lightbox-overlay" id="imgLightbox" onclick="closeLightbox(event)">
+            <div class="img-lightbox-box">
+                <button class="img-lightbox-close" onclick="closeLightboxBtn()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <img id="lightboxImg" src="" alt="Product Image">
+                <div class="img-lightbox-caption" id="lightboxCaption"></div>
             </div>
         </div>
-    </div>
 
-    <div class="order-target-overlay" id="order-ORD002">
-        <div class="order-target-card">
-            <div class="qod-topbar">
-                <div class="qod-topbar-left">
-                    <h2>Order #ORD002</h2>
-                    <span class="status-badge status-processing">Processing</span>
-                </div>
-                <a href="#" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Orders</a>
-            </div>
-            <div class="qod-card qod-customer-card">
-                <div class="qod-card-title"><i class="fas fa-user"></i> Customer Information</div>
-                <img class="qod-avatar" src="https://i.pravatar.cc/150?img=47" alt="Jane Smith">
-                <div class="qod-customer-name">Jane Smith</div>
-                <div class="qod-contact-row"><i class="fas fa-envelope"></i> janesmith@email.com</div>
-                <div class="qod-contact-row"><i class="fas fa-phone"></i> +1 234 567 8902</div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-box-open"></i> Order Items</div>
-                <div class="table-responsive">
-                    <table class="qod-items-table">
-                        <thead><tr><th>Product</th><th class="qod-text-right">Qty</th><th class="qod-text-right">Price</th><th class="qod-text-right">Subtotal</th></tr></thead>
-                        <tbody>
-                            <tr><td>Fresh Potatoes</td><td class="qod-text-right">4</td><td class="qod-text-right">₹32</td><td class="qod-text-right">₹128</td></tr>
-                            <tr><td>Fresh Spinach</td><td class="qod-text-right">3</td><td class="qod-text-right">₹25</td><td class="qod-text-right">₹75</td></tr>
-                            <tr><td>Greek Yogurt</td><td class="qod-text-right">2</td><td class="qod-text-right">₹120</td><td class="qod-text-right">₹240</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="qod-totals">
-                    <div class="qod-totals-row"><span>Subtotal</span><span>₹443</span></div>
-                    <div class="qod-totals-row"><span>Shipping Charge</span><span>₹80</span></div>
-                    <div class="qod-totals-row qod-discount"><span>Discount</span><span>- ₹150</span></div>
-                    <div class="qod-totals-row qod-grand-total"><span>Grand Total</span><span>₹373</span></div>
-                </div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-map-marker-alt"></i> Shipping Address</div>
-                <div class="qod-address-text"><strong>Jane Smith</strong>48 Maple Avenue<br>Los Angeles, CA - 90012<br>United States<br>+1 234 567 8902</div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-bolt"></i> Actions</div>
-                <div class="qod-actions">
-                    <button class="qod-btn qod-btn-accept" disabled><i class="fas fa-check-circle"></i> Accept Order</button>
-                    <button class="qod-btn qod-btn-reject"><i class="fas fa-times-circle"></i> Reject Order</button>
-                    <button class="qod-btn qod-btn-deliver"><i class="fas fa-truck"></i> Mark as Delivered</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="order-target-overlay" id="order-ORD003">
-        <div class="order-target-card">
-            <div class="qod-topbar">
-                <div class="qod-topbar-left">
-                    <h2>Order #ORD003</h2>
-                    <span class="status-badge status-pending">Pending</span>
-                </div>
-                <a href="#" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Orders</a>
-            </div>
-            <div class="qod-card qod-customer-card">
-                <div class="qod-card-title"><i class="fas fa-user"></i> Customer Information</div>
-                <img class="qod-avatar" src="https://i.pravatar.cc/150?img=33" alt="Bob Wilson">
-                <div class="qod-customer-name">Bob Wilson</div>
-                <div class="qod-contact-row"><i class="fas fa-envelope"></i> bobwilson@email.com</div>
-                <div class="qod-contact-row"><i class="fas fa-phone"></i> +1 234 567 8903</div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-box-open"></i> Order Items</div>
-                <div class="table-responsive">
-                    <table class="qod-items-table">
-                        <thead><tr><th>Product</th><th class="qod-text-right">Qty</th><th class="qod-text-right">Price</th><th class="qod-text-right">Subtotal</th></tr></thead>
-                        <tbody>
-                            <tr><td>Fresh Cow Milk</td><td class="qod-text-right">1</td><td class="qod-text-right">₹58</td><td class="qod-text-right">₹58</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="qod-totals">
-                    <div class="qod-totals-row"><span>Subtotal</span><span>₹58</span></div>
-                    <div class="qod-totals-row"><span>Shipping Charge</span><span>₹0</span></div>
-                    <div class="qod-totals-row qod-discount"><span>Discount</span><span>- ₹0</span></div>
-                    <div class="qod-totals-row qod-grand-total"><span>Grand Total</span><span>₹58</span></div>
-                </div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-map-marker-alt"></i> Shipping Address</div>
-                <div class="qod-address-text"><strong>Bob Wilson</strong>9 Riverside Lane<br>Chicago, IL - 60601<br>United States<br>+1 234 567 8903</div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-bolt"></i> Actions</div>
-                <div class="qod-actions">
-                    <button class="qod-btn qod-btn-accept"><i class="fas fa-check-circle"></i> Accept Order</button>
-                    <button class="qod-btn qod-btn-reject"><i class="fas fa-times-circle"></i> Reject Order</button>
-                    <button class="qod-btn qod-btn-deliver" disabled><i class="fas fa-truck"></i> Mark as Delivered</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="order-target-overlay" id="order-ORD004">
-        <div class="order-target-card">
-            <div class="qod-topbar">
-                <div class="qod-topbar-left">
-                    <h2>Order #ORD004</h2>
-                    <span class="status-badge status-delivered">Delivered</span>
-                </div>
-                <a href="#" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Orders</a>
-            </div>
-            <div class="qod-card qod-customer-card">
-                <div class="qod-card-title"><i class="fas fa-user"></i> Customer Information</div>
-                <img class="qod-avatar" src="https://i.pravatar.cc/150?img=29" alt="Alice Brown">
-                <div class="qod-customer-name">Alice Brown</div>
-                <div class="qod-contact-row"><i class="fas fa-envelope"></i> alicebrown@email.com</div>
-                <div class="qod-contact-row"><i class="fas fa-phone"></i> +1 234 567 8904</div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-box-open"></i> Order Items</div>
-                <div class="table-responsive">
-                    <table class="qod-items-table">
-                        <thead><tr><th>Product</th><th class="qod-text-right">Qty</th><th class="qod-text-right">Price</th><th class="qod-text-right">Subtotal</th></tr></thead>
-                        <tbody>
-                            <tr><td>Farm Tomatoes</td><td class="qod-text-right">2</td><td class="qod-text-right">₹40</td><td class="qod-text-right">₹80</td></tr>
-                            <tr><td>Fresh Spinach</td><td class="qod-text-right">1</td><td class="qod-text-right">₹25</td><td class="qod-text-right">₹25</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="qod-totals">
-                    <div class="qod-totals-row"><span>Subtotal</span><span>₹105</span></div>
-                    <div class="qod-totals-row"><span>Shipping Charge</span><span>₹30</span></div>
-                    <div class="qod-totals-row qod-discount"><span>Discount</span><span>- ₹15</span></div>
-                    <div class="qod-totals-row qod-grand-total"><span>Grand Total</span><span>₹120</span></div>
-                </div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-map-marker-alt"></i> Shipping Address</div>
-                <div class="qod-address-text"><strong>Alice Brown</strong>77 Sunset Boulevard<br>San Diego, CA - 92101<br>United States<br>+1 234 567 8904</div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-bolt"></i> Actions</div>
-                <div class="qod-actions">
-                    <button class="qod-btn qod-btn-accept" disabled><i class="fas fa-check-circle"></i> Accept Order</button>
-                    <button class="qod-btn qod-btn-reject" disabled><i class="fas fa-times-circle"></i> Reject Order</button>
-                    <button class="qod-btn qod-btn-deliver" disabled><i class="fas fa-truck"></i> Mark as Delivered</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="order-target-overlay" id="order-ORD005">
-        <div class="order-target-card">
-            <div class="qod-topbar">
-                <div class="qod-topbar-left">
-                    <h2>Order #ORD005</h2>
-                    <span class="status-badge status-processing">Processing</span>
-                </div>
-                <a href="#" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Orders</a>
-            </div>
-            <div class="qod-card qod-customer-card">
-                <div class="qod-card-title"><i class="fas fa-user"></i> Customer Information</div>
-                <img class="qod-avatar" src="https://i.pravatar.cc/150?img=53" alt="Charlie Davis">
-                <div class="qod-customer-name">Charlie Davis</div>
-                <div class="qod-contact-row"><i class="fas fa-envelope"></i> charliedavis@email.com</div>
-                <div class="qod-contact-row"><i class="fas fa-phone"></i> +1 234 567 8905</div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-box-open"></i> Order Items</div>
-                <div class="table-responsive">
-                    <table class="qod-items-table">
-                        <thead><tr><th>Product</th><th class="qod-text-right">Qty</th><th class="qod-text-right">Price</th><th class="qod-text-right">Subtotal</th></tr></thead>
-                        <tbody>
-                            <tr><td>Fresh Potatoes</td><td class="qod-text-right">3</td><td class="qod-text-right">₹32</td><td class="qod-text-right">₹96</td></tr>
-                            <tr><td>Fresh Cow Milk</td><td class="qod-text-right">4</td><td class="qod-text-right">₹58</td><td class="qod-text-right">₹232</td></tr>
-                            <tr><td>Farm Tomatoes</td><td class="qod-text-right">2</td><td class="qod-text-right">₹40</td><td class="qod-text-right">₹80</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="qod-totals">
-                    <div class="qod-totals-row"><span>Subtotal</span><span>₹408</span></div>
-                    <div class="qod-totals-row"><span>Shipping Charge</span><span>₹50</span></div>
-                    <div class="qod-totals-row qod-discount"><span>Discount</span><span>- ₹35</span></div>
-                    <div class="qod-totals-row qod-grand-total"><span>Grand Total</span><span>₹423</span></div>
-                </div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-map-marker-alt"></i> Shipping Address</div>
-                <div class="qod-address-text"><strong>Charlie Davis</strong>15 Greenwood Street<br>Houston, TX - 77002<br>United States<br>+1 234 567 8905</div>
-            </div>
-            <div class="qod-card">
-                <div class="qod-card-title"><i class="fas fa-bolt"></i> Actions</div>
-                <div class="qod-actions">
-                    <button class="qod-btn qod-btn-accept" disabled><i class="fas fa-check-circle"></i> Accept Order</button>
-                    <button class="qod-btn qod-btn-reject"><i class="fas fa-times-circle"></i> Reject Order</button>
-                    <button class="qod-btn qod-btn-deliver"><i class="fas fa-truck"></i> Mark as Delivered</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- IMAGE LIGHTBOX POPUP -->
-    <div class="img-lightbox-overlay" id="imgLightbox" onclick="closeLightbox(event)">
-        <div class="img-lightbox-box">
-            <button class="img-lightbox-close" onclick="closeLightboxBtn()">
-                <i class="fas fa-times"></i>
-            </button>
-            <img id="lightboxImg" src="" alt="Product Image">
-            <div class="img-lightbox-caption" id="lightboxCaption"></div>
-        </div>
-    </div>
-
-    <script>
-        let users = [
-            { id: 1, name: 'John Doe', email: 'john@email.com', phone: '9876543210', role: 'User', status: 'Active', joined: '2024-01-01' },
-            { id: 2, name: 'Jane Smith', email: 'jane@email.com', phone: '9876543211', role: 'Manager', status: 'Active', joined: '2024-01-02' },
-            { id: 3, name: 'Bob Wilson', email: 'bob@email.com', phone: '9876543212', role: 'User', status: 'Inactive', joined: '2024-01-03' },
-            { id: 4, name: 'Alice Brown', email: 'alice@email.com', phone: '9876543213', role: 'Admin', status: 'Active', joined: '2024-01-04' },
-            { id: 5, name: 'Charlie Davis', email: 'charlie@email.com', phone: '9876543214', role: 'User', status: 'Active', joined: '2024-01-05' }
-        ];
-
-        let payments = [
-            { id: 'PAY001', order: 'ORD001', customer: 'John Doe', amount: 1234, method: 'UPI', date: '2024-01-15', status: 'Paid' },
-            { id: 'PAY002', order: 'ORD002', customer: 'Jane Smith', amount: 2345, method: 'Card', date: '2024-01-16', status: 'Paid' },
-            { id: 'PAY003', order: 'ORD003', customer: 'Bob Wilson', amount: 58, method: 'Cash', date: '2024-01-17', status: 'Unpaid' },
-            { id: 'PAY004', order: 'ORD004', customer: 'Alice Brown', amount: 120, method: 'UPI', date: '2024-01-18', status: 'Paid' },
-            { id: 'PAY005', order: 'ORD005', customer: 'Charlie Davis', amount: 399, method: 'Card', date: '2024-01-19', status: 'Paid' }
-        ];
-
-        let currentDetailProductId = null;
-
-        window.onload = function() {
-            loadCategories();
-            loadUsers();
-            loadPayments();
-            loadViewProducts();
-        };
-
-        // Toggle submenu function
-        function toggleSubmenu(menuId, element) {
-            // Close all other submenus first
-            let allSubmenus = document.querySelectorAll('.submenu');
-            let allNavLinks = document.querySelectorAll('.nav-link');
+        <script>
             
-            allSubmenus.forEach(submenu => {
-                if(submenu.id !== menuId && submenu.classList.contains('active')) {
-                    submenu.classList.remove('active');
-                    // Reset icon rotation for other menus
-                    allNavLinks.forEach(link => {
-                        let icon = link.querySelector('i.fa-chevron-down');
-                        if(icon && link !== element) {
-                            icon.style.transform = 'rotate(0deg)';
-                        }
-                    });
+
+            let currentDetailProductId = null;
+
+            window.onload = function() {
+                loadCategories();
+                loadUsers();
+                loadPayments();
+                loadViewProducts();
+            };
+
+            // Toggle submenu function
+            function toggleSubmenu(menuId, element) {
+                // Close all other submenus first
+                let allSubmenus = document.querySelectorAll('.submenu');
+                let allNavLinks = document.querySelectorAll('.nav-link');
+                
+                allSubmenus.forEach(submenu => {
+                    if(submenu.id !== menuId && submenu.classList.contains('active')) {
+                        submenu.classList.remove('active');
+                        // Reset icon rotation for other menus
+                        allNavLinks.forEach(link => {
+                            let icon = link.querySelector('i.fa-chevron-down');
+                            if(icon && link !== element) {
+                                icon.style.transform = 'rotate(0deg)';
+                            }
+                        });
+                    }
+                });
+                // Toggle current submenu
+                let submenu = document.getElementById(menuId);
+                let icon = element.querySelector('i.fa-chevron-down');
+                
+                submenu.classList.toggle('active');
+                icon.style.transform = submenu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+            function showSection(section) {
+                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(section + '-section').classList.add('active');
+                
+                // Remove active class from all nav links
+                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+                
+                // Set active class based on section
+                if(section === 'dashboard') {
+                    document.querySelectorAll('.nav-link')[0].classList.add('active');
                 }
-            });
-            // Toggle current submenu
-            let submenu = document.getElementById(menuId);
-            let icon = element.querySelector('i.fa-chevron-down');
-            
-            submenu.classList.toggle('active');
-            icon.style.transform = submenu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
-        }
-        function showSection(section) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(section + '-section').classList.add('active');
-            
-            // Remove active class from all nav links
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            
-            // Set active class based on section
-            if(section === 'dashboard') {
-                document.querySelectorAll('.nav-link')[0].classList.add('active');
+                else if(section === 'addProduct' || section === 'viewProducts') {
+                    // Products menu active
+                    document.querySelectorAll('.nav-link')[1].classList.add('active');
+                }
+                else if(section === 'addCategory' || section === 'categories') {
+                    // Categories menu active
+                    document.querySelectorAll('.nav-link')[2].classList.add('active');
+                }
+                else if(section === 'orders') {
+                    document.querySelectorAll('.nav-link')[3].classList.add('active');
+                }
+                else if(section === 'users') {
+                    document.querySelectorAll('.nav-link')[4].classList.add('active');
+                }
+                else if(section === 'payments') {
+                    document.querySelectorAll('.nav-link')[5].classList.add('active');
+                }
+                else if(section === 'settings') {
+                    document.querySelectorAll('.nav-link')[6].classList.add('active');
+                }
+                
+                // Load data if needed
+                if(section === 'viewProducts') loadViewProducts();
+                else if(section === 'categories') loadCategories();
             }
-            else if(section === 'addProduct' || section === 'viewProducts') {
-                // Products menu active
-                document.querySelectorAll('.nav-link')[1].classList.add('active');
+            function filterViewProducts() {
+                let search = document.getElementById('viewSearchInput').value.toLowerCase();
+                let category = document.getElementById('viewCategoryFilter').value;
+                let filtered = products.filter(p => {
+                    let matchSearch = p.name.toLowerCase().includes(search);
+                    let matchCat = category === 'all' || p.category === category;
+                    return matchSearch && matchCat;
+                });
+                loadViewProducts(filtered);
             }
-            else if(section === 'addCategory' || section === 'categories') {
-                // Categories menu active
-                document.querySelectorAll('.nav-link')[2].classList.add('active');
+            function loadUsers(filteredUsers = users) {
+                let tbody = document.getElementById('usersTableBody');
+                if(!tbody) return;
+                tbody.innerHTML = '';
+                filteredUsers.forEach(user => {
+                    tbody.innerHTML += `<tr><td>${user.id}</td><td>${user.name}</td><td>${user.email}</td><td>${user.phone}</td><td><span class="user-role">${user.role}</span></td><td><span class="status-badge ${user.status === 'Active' ? 'status-active' : 'status-inactive'}">${user.status}</span></td><td>${user.joined}</td><td><div class="table-actions"><button class="table-action-btn edit-btn" onclick="editUser(${user.id})"><i class="fas fa-edit"></i> Edit</button><button class="table-action-btn delete-btn" onclick="deleteUser(${user.id})"><i class="fas fa-trash"></i> Delete</button></div></td></tr>`;
+                });
             }
-            else if(section === 'orders') {
-                document.querySelectorAll('.nav-link')[3].classList.add('active');
+            function searchUsers(query) { loadUsers(!query ? users : users.filter(u => u.name.toLowerCase().includes(query.toLowerCase()) || u.email.toLowerCase().includes(query.toLowerCase()))); }
+            function editUser(id) { alert('Edit user feature aane wala hai!'); }
+            function deleteUser(id) { if(confirm('Kya aap yeh user delete karna chahte ho?')) { users = users.filter(u => u.id !== id); loadUsers(); alert('User delete ho gaya!'); } }
+            function openLightbox(imgSrc, caption) {
+                document.getElementById('lightboxImg').src = imgSrc;
+                document.getElementById('lightboxCaption').innerText = caption || '';
+                document.getElementById('imgLightbox').classList.add('open');
+                document.body.style.overflow = 'hidden';
             }
-            else if(section === 'users') {
-                document.querySelectorAll('.nav-link')[4].classList.add('active');
-            }
-            else if(section === 'payments') {
-                document.querySelectorAll('.nav-link')[5].classList.add('active');
-            }
-            else if(section === 'settings') {
-                document.querySelectorAll('.nav-link')[6].classList.add('active');
-            }
-            
-            // Load data if needed
-            if(section === 'viewProducts') loadViewProducts();
-            else if(section === 'categories') loadCategories();
-        }
-        function filterViewProducts() {
-            let search = document.getElementById('viewSearchInput').value.toLowerCase();
-            let category = document.getElementById('viewCategoryFilter').value;
-            let filtered = products.filter(p => {
-                let matchSearch = p.name.toLowerCase().includes(search);
-                let matchCat = category === 'all' || p.category === category;
-                return matchSearch && matchCat;
-            });
-            loadViewProducts(filtered);
-        }
-        function loadUsers(filteredUsers = users) {
-            let tbody = document.getElementById('usersTableBody');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-            filteredUsers.forEach(user => {
-                tbody.innerHTML += `<tr><td>${user.id}</td><td>${user.name}</td><td>${user.email}</td><td>${user.phone}</td><td><span class="user-role">${user.role}</span></td><td><span class="status-badge ${user.status === 'Active' ? 'status-active' : 'status-inactive'}">${user.status}</span></td><td>${user.joined}</td><td><div class="table-actions"><button class="table-action-btn edit-btn" onclick="editUser(${user.id})"><i class="fas fa-edit"></i> Edit</button><button class="table-action-btn delete-btn" onclick="deleteUser(${user.id})"><i class="fas fa-trash"></i> Delete</button></div></td></tr>`;
-            });
-        }
-        function searchUsers(query) { loadUsers(!query ? users : users.filter(u => u.name.toLowerCase().includes(query.toLowerCase()) || u.email.toLowerCase().includes(query.toLowerCase()))); }
-        function editUser(id) { alert('Edit user feature aane wala hai!'); }
-        function deleteUser(id) { if(confirm('Kya aap yeh user delete karna chahte ho?')) { users = users.filter(u => u.id !== id); loadUsers(); alert('User delete ho gaya!'); } }
-        function openLightbox(imgSrc, caption) {
-            document.getElementById('lightboxImg').src = imgSrc;
-            document.getElementById('lightboxCaption').innerText = caption || '';
-            document.getElementById('imgLightbox').classList.add('open');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeLightbox(e) { if(e.target === document.getElementById('imgLightbox')) { document.getElementById('imgLightbox').classList.remove('open'); document.body.style.overflow = ''; } }
-        function closeLightboxBtn() { document.getElementById('imgLightbox').classList.remove('open'); document.body.style.overflow = ''; }
-        document.addEventListener('keydown', function(e) { if(e.key === 'Escape') closeLightboxBtn(); });
+            function closeLightbox(e) { if(e.target === document.getElementById('imgLightbox')) { document.getElementById('imgLightbox').classList.remove('open'); document.body.style.overflow = ''; } }
+            function closeLightboxBtn() { document.getElementById('imgLightbox').classList.remove('open'); document.body.style.overflow = ''; }
+            document.addEventListener('keydown', function(e) { if(e.key === 'Escape') closeLightboxBtn(); });
 
-        function loadPayments() {
-            let tbody = document.getElementById('paymentsTableBody');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-            payments.forEach(p => {
-                tbody.innerHTML += `<tr><td>${p.id}</td><td>#${p.order}</td><td>${p.customer}</td><td>₹${p.amount}</td><td>${p.method}</td><td>${p.date}</td><td><span class="status-badge ${p.status === 'Paid' ? 'status-paid' : 'status-unpaid'}">${p.status}</span></td></tr>`;
-            });
-        }
-    </script>
-</body>
-</html>
+            function loadPayments() {
+                let tbody = document.getElementById('paymentsTableBody');
+                if(!tbody) return;
+                tbody.innerHTML = '';
+                payments.forEach(p => {
+                    tbody.innerHTML += `<tr><td>${p.id}</td><td>#${p.order}</td><td>${p.customer}</td><td>₹${p.amount}</td><td>${p.method}</td><td>${p.date}</td><td><span class="status-badge ${p.status === 'Paid' ? 'status-paid' : 'status-unpaid'}">${p.status}</span></td></tr>`;
+                });
+            }
+        </script>
+    </body>
+    </html>

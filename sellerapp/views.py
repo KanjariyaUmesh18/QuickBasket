@@ -10,15 +10,9 @@ from .utils import *
 def login(request):
     if "email" in request.session:
         uid = user.objects.get(email = request.session['email'])
+        print("step 1")
         if uid.role == "seller":
-                    sid = seller.objects.get(user_id=uid)
-                    context = {
-                        "uid" : uid,
-                        "sid" : sid,
-                        'totalproducts' : product.objects.count(),
-                        'totalcategories': categories.objects.count()
-                    }
-                    return render(request,"sellerapp/index.html",context)
+                    return redirect("index")
         elif uid.role == "customer":
                     return redirect("userpanel")
     else:
@@ -56,13 +50,61 @@ def userpanel(request):
     return render(request, "sellerapp/userpanel.html", context)
 
 def index(request):
-     uid = user.objects.get(email = request.session['email'])
-     sid = seller.objects.get(user_id = uid)
-     context = {
-          "uid" : uid,
-          "sid" : sid
-     }
-     return render(request,"sellerapp/index.html",context)
+
+    uid = user.objects.get(email=request.session['email'])
+
+    print(uid.email)
+    print(uid.role)
+
+    if uid.role != "seller":
+        return redirect("userpanel")
+
+    sid = seller.objects.get(user_id=uid)
+
+    orders = Order.objects.all().order_by('-id')
+
+    users = user.objects.all()
+    userdata = []
+
+    for u in users:
+
+        if u.role == "customer":
+            c = Customer.objects.filter(user_id=u).first()
+
+            userdata.append({
+                "id": u.id,
+                "name": c.firstname + " " + c.lastname,
+                "email": u.email,
+                "phone": c.contactno,
+                "role": u.role,
+                "joined": u.created_at
+            })
+
+        elif u.role == "seller":
+            s = seller.objects.filter(user_id=u).first()
+
+            userdata.append({
+                "id": u.id,
+                "name": s.firstname + " " + s.lastname,
+                "email": u.email,
+                "phone": s.contactno,
+                "role": u.role,
+                "joined": u.created_at
+            })
+
+    context = {
+        "uid": uid,
+        "sid": sid,
+        "orders": orders,
+        "totalproducts": product.objects.count(),
+        "totalcategories": categories.objects.count(),
+        "totalorder" : Order.objects.count(),
+        "totalusers" : user.objects.count(),
+        "users" : users,
+        "userdata": userdata
+    }
+
+    return render(request, "sellerapp/index.html", context)
 
 def register(request):
     if request.POST:
@@ -136,11 +178,11 @@ def update_profile(request):
 
                     sid.save()
 
-                    context = {
-                        "uid" : uid,
-                        "sid" : sid
-                    }
-                    return render(request,"sellerapp/index.html",context)
+                    # context = {
+                    #     "uid" : uid,
+                    #     "sid" : sid
+                    # }
+                    return redirect("index")
         return HttpResponseRedirect("/sellerapp/login")
     else:
          return HttpResponseRedirect("/sellerapp/login")
@@ -432,15 +474,72 @@ def add_to_cart(request,pk):
         return redirect('userpanel')
     
 def checkout(request):
-     uid = user.objects.get(email = request.session['email'])
-     cid = Customer.objects.get(user_id = uid)
+        uid = user.objects.get(email=request.session['email'])
+        cid = Customer.objects.get(user_id=uid)
 
-     cart = Cart.objects.get(customer=cid)
+        cart = Cart.objects.get(customer=cid)
+        cartitems = Cartitem.objects.filter(cart=cart)
 
-     Cartitem.objects.filter(cart=cart).delete()
+        total = 0
 
-     return redirect('cart')
+        for item in cartitems:
+            total += item.Product.product_price * item.qty
+
+        order = Order.objects.create(
+            customer=cid,
+            total_amount=total
+        )
+
+        for item in cartitems:
+            Orderitem.objects.create(
+                order=order,
+                product=item.Product,
+                qty=item.qty,
+                price=item.Product.product_price
+            )
+
+        cartitems.delete()
+
+        return redirect('index')
+
+def admin_orders(request):
+
+    orders = Order.objects.all().order_by('-id')
+
+    context = {
+        "orders": orders
+    }
+
+    return render(request,"sellerapp/orders.html",context)
+
+def order_details(request,oid):
+    if "email" in request.session:
+        uid = user.objects.get(email=request.session['email'])
+        sid = seller.objects.get(user_id=uid)
+        order = Order.objects.get(id=oid)
+        cid = order.customer
+        items = Orderitem.objects.filter(order_id=oid)
+
+        for i in items:
+            i.sub_total = i.product.product_price * i.qty
+        
+        subtotal1 = 0
+        for i in items:
+             subtotal1 += i.price * i.qty
+            
+        
+
+    context = {
+        "items": items,
+        "uid" : uid,
+        "sid" : sid,
+        "cid" : cid,
+        "subtotal1" : subtotal1,
+        "grandtotal" : subtotal1 - 25
+    }
+    return render(request, "sellerapp/order_details.html", context)
      
+
 
 
 
