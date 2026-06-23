@@ -9,37 +9,175 @@
     <!-- Google Fonts: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'sellerapp/css/login.css' %}">
+    <style>
+        /* Simple Error Message with Pure CSS Animation */
+        .error-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 10px 0 20px 0;
+            border-left: 4px solid #dc2626;
+            animation: slideDown 0.4s ease-out;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .error-message i {
+            font-size: 1.1rem;
+            color: #dc2626;
+            animation: iconPop 0.5s ease-out;
+        }
+
+        .error-message .close-btn {
+            margin-left: auto;
+            cursor: pointer;
+            padding: 0 6px;
+            font-size: 1.2rem;
+            color: #991b1b;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .error-message .close-btn:hover {
+            opacity: 1;
+        }
+
+        /* Checkbox trick for closing error without JS */
+        .error-toggle {
+            display: none;
+        }
+
+        .error-toggle:checked + .error-message {
+            display: none;
+        }
+
+        /* Auto-hide after 5 seconds using CSS animation */
+        @keyframes slideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes iconPop {
+            0% {
+                transform: scale(0) rotate(-30deg);
+            }
+            60% {
+                transform: scale(1.2) rotate(5deg);
+            }
+            100% {
+                transform: scale(1) rotate(0);
+            }
+        }
+
+        /* Auto-hide after 5 seconds using CSS animation */
+        .error-auto-hide {
+            animation: slideDown 0.4s ease-out, fadeOut 0.5s ease-in 4.5s forwards;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                max-height: 100px;
+                margin: 10px 0 20px 0;
+                padding: 12px 16px;
+            }
+            100% {
+                opacity: 0;
+                max-height: 0;
+                margin: 0;
+                padding: 0 16px;
+                overflow: hidden;
+                border: none;
+            }
+        }
+
+        /* Input shake on error - pure CSS */
+        .input-field.error input {
+            border-color: #dc2626 !important;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        /* Success message style */
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            border-left-color: #059669;
+        }
+
+        .success-message i {
+            color: #059669;
+        }
+
+        /* Label for close button */
+        .close-label {
+            cursor: pointer;
+        }
+
+        /* Simple responsive */
+        @media (max-width: 480px) {
+            .error-message {
+                font-size: 0.85rem;
+                padding: 10px 12px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- LOGIN CARD – Admin / User login, two selection boxes instead of dropdown -->
+    <!-- LOGIN CARD -->
     <div class="login-card">
         <div class="form-header">
             <i class="fas fa-sign-in-alt"></i>
             <h2>Login</h2>
         </div>
 
-        <form  method="post" action="{% url 'login' %}">
+        <!-- Error Message with Pure CSS Close Button (using checkbox) -->
+        {% if msg %}
+        <div>
+            <input type="checkbox" id="closeError" class="error-toggle">
+            <div class="error-message error-auto-hide">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>{{ msg }}</span>
+                <label for="closeError" class="close-btn close-label">&times;</label>
+            </div>
+        </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
-            
-            <!-- TWO SELECTION BOXES: ADMIN / USER (replaces dropdown) -->
-           
 
             <!-- Email Field -->
-            <div class="input-field">
+            <div class="input-field {% if msg %}error{% endif %}" id="emailField">
                 <label><i class="fas fa-envelope"></i> Email</label>
                 <input type="email" placeholder="john.doe@example.com" required name="email">
             </div>
 
             <!-- Password Field -->
-            <div class="input-field">
+            <div class="input-field {% if msg %}error{% endif %}" id="passwordField">
                 <label><i class="fas fa-lock"></i> Password</label>
                 <input type="password" placeholder="Enter password" required name="password">
             </div>
 
+            <input type="submit" class="login-btn" value="Login">
 
-            <input type="submit" class="login-btn" value="login">
-
-            <!-- Register Hint – now points to registration (Admin/User) -->
+            <!-- Register Hint -->
             <div class="register-hint">
                 Don't have an account? <a href="{% url 'register' %}">Register</a>
                 <span style="display: block; font-size:0.7rem; margin-top:5px; color: #a0aec0;">
@@ -49,6 +187,6 @@
         </form>
     </div>
 
-    <!-- (no script needed, inline onsubmit handles validation) -->
+    <!-- No JavaScript at all! Pure CSS -->
 </body>
 </html>
