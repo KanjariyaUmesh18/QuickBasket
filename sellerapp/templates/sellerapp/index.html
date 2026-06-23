@@ -252,11 +252,9 @@
                                     <label><i class="fas fa-layer-group"></i> Category *</label>
                                     <select name="product_category">
                                         <option value="">Select Category</option>
-                                        <option value="Dairy">🥛 Dairy</option>
-                                        <option value="Vegetables">🥬 Vegetables</option>
-                                        <option value="Fruits">🍎 Fruits</option>
-                                        <option value="Grocery">🛒 Grocery</option>
-                                        <option value="Bakery">🥖 Bakery</option>
+                                        {% for c in categories_data%}
+                                        <option value="{{ c.id }}">{{c.categories_name}}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div class="form-group">

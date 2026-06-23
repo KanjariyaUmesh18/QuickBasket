@@ -7,6 +7,17 @@ from .models import product,user,categories
 import random
 from .utils import *
 
+
+def login_required(func):
+    def wrapper(request, *args, **kwargs):
+
+        if 'email' not in request.session:
+            return redirect('login')
+
+        return func(request, *args, **kwargs)
+
+    return wrapper
+
 def login(request):
     if "email" in request.session:
         uid = user.objects.get(email = request.session['email'])
@@ -31,10 +42,15 @@ def login(request):
             except Exception as e:
                 print("ERROR:", e)
         return render(request,"sellerapp/login.html")
-    
+
+@login_required   
 def userpanel(request):
-    print("this is userpanel")
-    uid = user.objects.get(email=request.session['email'])
+    email = request.session.get('email')
+
+    if not email:
+         return redirect('login')
+    
+    uid = user.objects.get(email=email)
     print(uid)
     print(uid.role)
     sid = Customer.objects.filter(user_id=uid).first()
@@ -45,13 +61,18 @@ def userpanel(request):
         "uid": uid,
         "sid": sid,
         'products': products,
-        "categories" : categories_data
+        "categories_data" : categories_data
     }
     return render(request, "sellerapp/userpanel.html", context)
 
+@login_required
 def index(request):
+    email = request.session.get('email')
 
-    uid = user.objects.get(email=request.session['email'])
+    if not email:
+         return redirect('login')
+    
+    uid = user.objects.get(email=email)
 
     print(uid.email)
     print(uid.role)
@@ -91,6 +112,8 @@ def index(request):
                 "role": u.role,
                 "joined": u.created_at
             })
+    
+    categories_data = categories.objects.all()
 
     context = {
         "uid": uid,
@@ -101,7 +124,8 @@ def index(request):
         "totalorder" : Order.objects.count(),
         "totalusers" : user.objects.count(),
         "users" : users,
-        "userdata": userdata
+        "userdata": userdata,
+        "categories_data" : categories_data
     }
 
     return render(request, "sellerapp/index.html", context)
@@ -147,6 +171,7 @@ def register(request):
     else:
         return render(request,"sellerapp/register.html")
 
+@login_required
 def logout(request):
      if "email" in request.session:
           del request.session['email']
@@ -154,6 +179,7 @@ def logout(request):
      else:
            return HttpResponseRedirect('/sellerapp/login')
 
+@login_required
 def update_profile(request):
     if "email" in request.session:
         uid = user.objects.get(email = request.session['email'])
@@ -177,46 +203,43 @@ def update_profile(request):
                         sid.save()
 
                     sid.save()
-
-                    # context = {
-                    #     "uid" : uid,
-                    #     "sid" : sid
-                    # }
                     return redirect("index")
         return HttpResponseRedirect("/sellerapp/login")
     else:
          return HttpResponseRedirect("/sellerapp/login")
- 
+
+@login_required
 def add_product(request):
-    if "email" in request.session:
-        uid = user.objects.get(email = request.session['email'])
+    uid = user.objects.get(email = request.session['email'])
+    sid = seller.objects.get(user_id=uid)
+    category_id = request.POST['product_category']
 
-    if uid.role == "seller":
-        sid = seller.objects.get(user_id=uid)
-        pid = product.objects.create(
-              user_id = uid,
-              product_name = request.POST['product_name'],
-              product_category = request.POST['product_category'],
-              product_price = request.POST['product_price'],
-              stock_qty = request.POST['stock_qty'],
-              picture = request.FILES['picture'],
-              description = request.POST['description'],
-              discount = request.POST['discount'],
-              badge_text = request.POST['badge_text'],
-              weight_unit = request.POST['weight_unit'],
-              brand = request.POST['brand']
-            )
-        print("Product Saved")
-        print(pid.id)
-        print(pid.user_id)
-         
-        context = {
-                        "uid" : uid,
-                        "sid" : sid,
-                        "pid" : pid
-                        }
-        return redirect('/sellerapp/view-products')
+    category = categories.objects.get(id=category_id)
+    pid = product.objects.create(
+            user_id = uid,
+            product_name = request.POST['product_name'],
+            categories_pro=category,
+            product_price = request.POST['product_price'],
+            stock_qty = request.POST['stock_qty'],
+            picture = request.FILES['picture'],
+            description = request.POST['description'],
+            discount = request.POST['discount'],
+            badge_text = request.POST['badge_text'],
+            weight_unit = request.POST['weight_unit'],
+            brand = request.POST['brand']
+        )
+    print("Product Saved")
+    print(pid.id)
+    print(pid.user_id)
+        
+    context = {
+                    "uid" : uid,
+                    "sid" : sid,
+                    "pid" : pid
+                    }
+    return render(request,"sellerapp/index.html",context)
 
+@login_required
 def view_products(request):
     if "email" in request.session:
         uid = user.objects.get(email=request.session['email'])
@@ -233,6 +256,7 @@ def view_products(request):
         return render(request, 'sellerapp/view_products.html',context)
     return HttpResponseRedirect('/sellerapp/login')
 
+@login_required
 def add_category(request):
     if "email" in request.session:
         uid = user.objects.get(email = request.session['email'])
@@ -254,6 +278,7 @@ def add_category(request):
                 return redirect('/sellerapp/view_categories/')
         return render(request, "sellerapp/add_category.html", {"uid": uid, "sid": sid})
 
+@login_required
 def view_categories(request):
     if "email" in request.session:
         uid = user.objects.get(email=request.session['email'])
@@ -267,6 +292,7 @@ def view_categories(request):
         return render(request, 'sellerapp/view_categories.html',context)
     return HttpResponseRedirect('/sellerapp/login')
 
+@login_required
 def product_details(request, pid):
     if "email" in request.session:
         uid = user.objects.get(email=request.session['email'])
@@ -279,6 +305,7 @@ def product_details(request, pid):
     }
     return render(request, "sellerapp/product_details.html", context)
 
+@login_required
 def edit_product(request, pid):
     p = product.objects.get(id=pid)
     if request.method == "POST":
@@ -303,13 +330,14 @@ def edit_product(request, pid):
     }
     return render(request,"sellerapp/edit_products.html",context)
 
+@login_required
 def delete_product(request,pid):
      p = product.objects.get(id=pid)
      p.delete()
      p = product.objects.all()
      return redirect('/sellerapp/view-products')
 
-
+@login_required
 def edit_profile(request):
     if "email" in request.session:
         uid = user.objects.get(email = request.session['email'])
@@ -330,7 +358,8 @@ def edit_profile(request):
                 
         return HttpResponseRedirect("/sellerapp/userpanel/")
     return HttpResponseRedirect("/sellerapp/login")
-     
+
+@login_required   
 def forgot_password(request):
     if request.POST:
         email = request.POST['email']
@@ -353,6 +382,7 @@ def forgot_password(request):
     else:
      return render(request,"sellerapp/forgot_password.html")
 
+@login_required
 def reset_password(request):
     if request.POST:
           email = request.POST['email']
@@ -369,9 +399,16 @@ def reset_password(request):
                     "user" : "user does not exists"
                   }
                return render(request,"sellerapp/login.html",context)
+          else:
+            context = {
+                "error": "Invalid OTP or Password mismatch"
+            }
+            return render(request, "sellerapp/reset_password.html", context)
+
     else:         
         return render(request,"sellerapp/login.html")
 
+@login_required
 def edit_category(request,cid):
     if "email" in request.session:
         uid = user.objects.get(email=request.session['email'])
@@ -395,12 +432,14 @@ def edit_category(request,cid):
         }
         return render(request,"sellerapp/edit_category.html",context)
 
+@login_required
 def delete_category(request,cid):
      cat = categories.objects.get(id=cid)
      cat.delete()
      cat = product.objects.all()
      return redirect('/sellerapp/view_categories')
 
+@login_required
 def updated(request,pid):
     uid = user.objects.get(email=request.session['email'])
     sid = Customer.objects.get(user_id=uid)
@@ -414,14 +453,21 @@ def updated(request,pid):
     }
     return  render(request,"sellerapp/updated.html",context)
 
-def categories_product(request):
+@login_required
+def categories_product(request,caid):
      uid = user.objects.get(email = request.session['email'])
      sid = Customer.objects.filter(user_id=uid).first()
+
+     cate = categories.objects.get(id=caid)
+
+     products = product.objects.filter(categories_pro_id=caid)
      context = {
+          "products" : products,
           "sid" : sid
      }
      return render(request,"sellerapp/categories_product.html",context)
 
+@login_required
 def cart(request):
     uid = user.objects.get(email = request.session['email'])
     sid = Customer.objects.filter(user_id=uid).first()
@@ -453,6 +499,7 @@ def cart(request):
         }
         return render(request,"sellerapp/cart.html",context)
 
+@login_required
 def add_to_cart(request,pk):
      uid = user.objects.get(email = request.session['email'])
      if uid.role == "customer":
@@ -472,7 +519,8 @@ def add_to_cart(request,pk):
             cartitemdata.save()
         
         return redirect('userpanel')
-    
+
+@login_required 
 def checkout(request):
         uid = user.objects.get(email=request.session['email'])
         cid = Customer.objects.get(user_id=uid)
@@ -502,6 +550,7 @@ def checkout(request):
 
         return redirect('index')
 
+@login_required
 def admin_orders(request):
 
     orders = Order.objects.all().order_by('-id')
@@ -512,6 +561,7 @@ def admin_orders(request):
 
     return render(request,"sellerapp/orders.html",context)
 
+@login_required
 def order_details(request,oid):
     if "email" in request.session:
         uid = user.objects.get(email=request.session['email'])

@@ -320,9 +320,9 @@
             <h4>All categoriees <span>{{categories.count}} items</span></h4>
         </div>
         <div class="cats">
-        {% for c in categories %}
+        {% for c in categories_data %}
             <div class="cat-card">
-                <a href="{% url 'categories_product' %}">
+                <a href="{% url 'categories_product' c.id %}">
                 <div class="cat-image">
                     <img src="{{ c.category_picture.url }}" alt="{{ c.categories_name }}" class="cat-img">
                 </div>

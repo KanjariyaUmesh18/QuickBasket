@@ -25,8 +25,20 @@ class seller(models.Model):
     def __str__(self):
         return self.firstname +" " + self.lastname
 
+
+
+class categories(models.Model):
+    user_id = models.ForeignKey(user,on_delete=models.CASCADE)
+    categories_name = models.CharField(max_length=20)
+    category_picture = models.FileField(upload_to="images/",default="images/default.jpg")
+    description = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.categories_name
+
 class product(models.Model):
     user_id = models.ForeignKey(user,on_delete=models.CASCADE, blank=True, null=True)
+    categories_pro = models.ForeignKey(categories,on_delete=models.CASCADE, null=True,blank=True)
     product_name = models.CharField(max_length=50)
     product_category = models.CharField(max_length=50)
     product_price = models.IntegerField()
@@ -40,15 +52,6 @@ class product(models.Model):
 
     def __str__(self):
         return self.product_name
-
-class categories(models.Model):
-    user_id = models.ForeignKey(user,on_delete=models.CASCADE)
-    categories_name = models.CharField(max_length=20)
-    category_picture = models.FileField(upload_to="images/",default="images/default.jpg")
-    description = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.categories_name
 
 class Cart(models.Model):
     from customerapp.models import Customer
