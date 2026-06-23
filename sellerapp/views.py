@@ -237,7 +237,7 @@ def add_product(request):
                     "sid" : sid,
                     "pid" : pid
                     }
-    return render(request,"sellerapp/index.html",context)
+    return render(request,"sellerapp/view_products.html",context)
 
 @login_required
 def view_products(request):
@@ -359,7 +359,7 @@ def edit_profile(request):
         return HttpResponseRedirect("/sellerapp/userpanel/")
     return HttpResponseRedirect("/sellerapp/login")
 
-@login_required   
+   
 def forgot_password(request):
     if request.POST:
         email = request.POST['email']
@@ -382,8 +382,9 @@ def forgot_password(request):
     else:
      return render(request,"sellerapp/forgot_password.html")
 
-@login_required
+
 def reset_password(request):
+    print("view calles")
     if request.POST:
           email = request.POST['email']
           otp = request.POST['otp']
@@ -406,7 +407,7 @@ def reset_password(request):
             return render(request, "sellerapp/reset_password.html", context)
 
     else:         
-        return render(request,"sellerapp/login.html")
+        return render(request,"sellerapp/reset_password.html")
 
 @login_required
 def edit_category(request,cid):
